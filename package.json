@@ -1,0 +1,24 @@
+{
+  "name": "airbnc",
+  "version": "1.0.0",
+  "description": "Welcome to my Portfolio project. The aim is to build a booking system with both users and properties.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NueSkull/airbnc.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/NueSkull/airbnc/issues"
+  },
+  "homepage": "https://github.com/NueSkull/airbnc#readme",
+  "dependencies": {
+    "postgresql": "^0.0.1"
+  }
+}
