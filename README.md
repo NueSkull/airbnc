@@ -34,5 +34,5 @@ Be sure to create and edit an .env file to be able to access the database. Use t
 
 ```
 PGDATABASE=airbnc_test
-PGPASSWORD=HiddenLlama91!
+
 ```
