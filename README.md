@@ -19,9 +19,20 @@ To run this project locally, please ensure you have installed
 
 ## Instructions
 
+### Executing Scripts
+
 To execute SQL scripts use 'psql -f' followed by the location of the SQL script from the root directory.
 For example, to create the database run the code below.
 
 ```
-psql -f db/01-create-database.sql
+psql -f db/create-database.sql
+```
+
+### Database Connection
+
+Be sure to create and edit an .env file to be able to access the database. Use the below for testing purposes.
+
+```
+PGDATABASE=airbnc_test
+PGPASSWORD=HiddenLlama91!
 ```
