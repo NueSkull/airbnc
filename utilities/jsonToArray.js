@@ -8,7 +8,6 @@ function makeJsonArray(data) {
     }
     array.push(valArray);
   }
-  console.log(array);
   return array;
 }
 module.exports = makeJsonArray;

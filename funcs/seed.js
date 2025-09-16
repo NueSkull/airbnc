@@ -28,7 +28,7 @@ async function seed() {
 
   const testResponse = await db.query("SELECT * FROM property_types;");
 
-  console.log(testResponse);
+  console.log(testResponse.rows);
 }
 
 module.exports = seed;
