@@ -1,6 +1,6 @@
 const db = require("./connection");
 const format = require("pg-format");
-const jsonToArray = require("./jsonToArray");
+const jsonToArray = require("../utilities/jsonToArray");
 const {
   bookingsData,
   favouritesData,
