@@ -3,6 +3,7 @@ function createReferenceTable(table, newKey, newValue) {
   table.forEach((row) => {
     returnObj[row[newKey]] = row[newValue];
   });
+  console.log(returnObj);
   return returnObj;
 }
 

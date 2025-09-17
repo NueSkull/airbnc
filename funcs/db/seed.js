@@ -1,6 +1,10 @@
 const db = require("./connection");
 const format = require("pg-format");
-const jsonToArray = require("../../utilities/jsonToArray");
+const jsonToArray = require("../../utilities/db/jsonToArray");
+const createReferenceTable = require("../../utilities/db/createReferenceTable");
+const mapAdjustedData = require("../../utilities/db/mapAdjustedData");
+const mergeNames = require("../../utilities/db/mergeNames");
+const arrangeArray = require("../../utilities/db/arrangeArray");
 
 async function seed(propertyTypesData, usersData, propertiesData, reviewsData) {
   // Table Drops
@@ -51,41 +55,35 @@ async function seed(propertyTypesData, usersData, propertiesData, reviewsData) {
     description TEXT
     );`);
 
-  const propertyValues = jsonToArray(propertiesData).map(async (property) => {
-    const [
-      name,
-      property_type,
-      location,
-      price_per_night,
-      description,
-      host_name,
-    ] = property;
-
-    const findHostId = await db.query(
-      `SELECT user_id FROM users WHERE CONCAT(first_name, ' ', surname) = $1`,
-      [host_name]
-    );
-
-    const hostId = findHostId.rows[0].user_id;
-
-    return [
-      name,
-      property_type,
-      location,
-      price_per_night,
-      description,
-      hostId,
-    ];
-  });
-
-  const dataWithHostIds = await Promise.all(propertyValues);
+  const mergeUserNames = mergeNames(insertedUsers);
+  const hostReferenceTable = createReferenceTable(
+    mergeUserNames,
+    "name",
+    "user_id"
+  );
+  const mappedUsersProperties = mapAdjustedData(
+    propertiesData,
+    "host_name",
+    "user_id",
+    hostReferenceTable
+  );
+  const rearrangedProperties = arrangeArray(mappedUsersProperties, [
+    "name",
+    "property_type",
+    "location",
+    "price_per_night",
+    "description",
+    "user_id",
+  ]);
 
   const { rows: insertedProperties } = await db.query(
     format(
       "INSERT INTO properties (name, property_type, location, price_per_night, description, host_id) VALUES %L RETURNING *",
-      dataWithHostIds
+      jsonToArray(rearrangedProperties)
     )
   );
+
+  console.log(insertedProperties);
 
   // Reviews
 
