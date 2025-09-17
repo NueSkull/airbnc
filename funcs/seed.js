@@ -1,17 +1,8 @@
 const db = require("./connection");
 const format = require("pg-format");
 const jsonToArray = require("../utilities/jsonToArray");
-const {
-  bookingsData,
-  favouritesData,
-  imagesData,
-  propertiesData,
-  propertyTypesData,
-  reviewsData,
-  usersData,
-} = require("../db/data/test/index");
 
-async function seed() {
+async function seed(propertyTypesData, usersData, propertiesData, reviewsData) {
   // Table Drops
   await db.query(`DROP TABLE IF EXISTS properties;`);
   await db.query(`DROP TABLE IF EXISTS property_types;`);
@@ -23,16 +14,12 @@ async function seed() {
         description TEXT NOT NULL
         );`);
 
-  await db.query(
+  const { rows: insertedPropertyTypes } = await db.query(
     format(
-      "INSERT INTO property_types (property_type, description) VALUES %L",
+      "INSERT INTO property_types (property_type, description) VALUES %L RETURNING *",
       jsonToArray(propertyTypesData)
     )
   );
-
-  // Print to Console for test
-  const propertyTypeQuery = await db.query("SELECT * FROM property_types;");
-  console.log(propertyTypeQuery.rows);
 
   // Users
   await db.query(`CREATE TABLE users (
@@ -46,16 +33,12 @@ async function seed() {
     created_at TIMESTAMP DEFAULT current_timestamp
     );`);
 
-  await db.query(
+  const { rows: insertedUsers } = await db.query(
     format(
-      "INSERT INTO users (first_name, surname, email, phone_number, is_host, avatar) VALUES %L",
+      "INSERT INTO users (first_name, surname, email, phone_number, is_host, avatar) VALUES %L RETURNING *",
       jsonToArray(usersData)
     )
   );
-
-  // Print to Console for test
-  const usersQuery = await db.query("SELECT * FROM users;");
-  console.log(usersQuery.rows);
 
   // Properties
   await db.query(`CREATE TABLE properties (
@@ -97,16 +80,23 @@ async function seed() {
 
   const dataWithHostIds = await Promise.all(propertyValues);
 
-  await db.query(
+  const { rows: insertedProperties } = await db.query(
     format(
-      "INSERT INTO properties (name, property_type, location, price_per_night, description, host_id) VALUES %L",
+      "INSERT INTO properties (name, property_type, location, price_per_night, description, host_id) VALUES %L RETURNING *",
       dataWithHostIds
     )
   );
 
-  // Print to Console for test
-  const propertyQuery = await db.query("SELECT * FROM properties;");
-  console.log(propertyQuery.rows);
+  // Reviews
+
+  db.query(`CREATE TABLE reviews (
+    review_id SERIAL PRIMARY KEY,
+    property_id INT NOT NULL REFERENCES properties(property_id),
+    guest_id INT NOT NULL REFERENCES users(user_id),
+    rating INT NOT NULL,
+    comment TEXT,
+    created_at TIMESTAMP DEFAULT current_timestamp
+    );`);
 }
 
 module.exports = seed;
