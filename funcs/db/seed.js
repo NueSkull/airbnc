@@ -8,6 +8,7 @@ const arrangeArray = require("../../utilities/db/arrangeArray");
 
 async function seed(propertyTypesData, usersData, propertiesData, reviewsData) {
   // Table Drops
+  await db.query(`DROP TABLE IF EXISTS reviews;`);
   await db.query(`DROP TABLE IF EXISTS properties;`);
   await db.query(`DROP TABLE IF EXISTS property_types;`);
   await db.query(`DROP TABLE IF EXISTS users;`);
@@ -83,8 +84,6 @@ async function seed(propertyTypesData, usersData, propertiesData, reviewsData) {
     )
   );
 
-  console.log(insertedProperties);
-
   // Reviews
 
   db.query(`CREATE TABLE reviews (
@@ -95,6 +94,33 @@ async function seed(propertyTypesData, usersData, propertiesData, reviewsData) {
     comment TEXT,
     created_at TIMESTAMP DEFAULT current_timestamp
     );`);
+
+  const propertyReferenceTable = createReferenceTable(
+    insertedProperties,
+    "name",
+    "property_id"
+  );
+
+  const remapPropertyIds = await mapAdjustedData(
+    reviewsData,
+    "property_name",
+    "property_id",
+    propertyReferenceTable
+  );
+
+  const remapUsersReviews = mapAdjustedData(
+    remapPropertyIds,
+    "guest_name",
+    "user_id",
+    hostReferenceTable
+  );
+
+  const { rows: insertedReviews } = await db.query(
+    format(
+      "INSERT INTO reviews (guest_id, property_id, rating, comment, created_at) VALUES %L RETURNING *",
+      jsonToArray(remapUsersReviews)
+    )
+  );
 }
 
 module.exports = seed;
