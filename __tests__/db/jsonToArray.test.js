@@ -1,4 +1,4 @@
-const makeJsonArray = require("../utilities/jsonToArray");
+const makeJsonArray = require("../../utilities/db/jsonToArray");
 
 const examples = {
   singlesingle: [

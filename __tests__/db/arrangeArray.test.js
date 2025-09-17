@@ -1,4 +1,4 @@
-const arrangeArray = require("../utilities/arrangeArray");
+const arrangeArray = require("../../utilities/db/arrangeArray");
 
 const sampleSingle = [{ name: "Frank", age: "32", location: "Manchester" }];
 const sampleMulti = [

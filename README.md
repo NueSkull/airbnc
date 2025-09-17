@@ -6,7 +6,6 @@ This project will be built using **Test-Driven Development (TDD)** methodology t
 
 **Technologies**
 
-- **Front End**: HTML, CSS, JavaScript (Node.js)
 - **Back End**: Node.js
 - **Database**: PostgreSQL (SQL)
 
@@ -19,20 +18,30 @@ To run this project locally, please ensure you have installed
 
 ## Instructions
 
-### Executing Scripts
-
-To execute SQL scripts use 'psql -f' followed by the location of the SQL script from the root directory.
-For example, to create the database run the code below.
+First of all we need to install the dependancies, install them with the below command.
 
 ```
-psql -f db/create-database.sql
+npm install
 ```
 
-### Database Connection
-
-Be sure to create and edit an .env file to be able to access the database. Use the below for testing purposes.
+Next, be sure to create and edit an .env file to be able to access the database. Use the below for testing purposes.
 
 ```
 PGDATABASE=airbnc_test
+```
 
+### Create the database
+
+An NPM script has been created to easily create or recreate the database, use the command below.
+
+```
+npm run createdb
+```
+
+### Seed the tables
+
+Now it's time to create the tables and insert data, use the command below.
+
+```
+npm run seed
 ```

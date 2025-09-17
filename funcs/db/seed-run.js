@@ -8,7 +8,7 @@ const {
   propertyTypesData,
   reviewsData,
   usersData,
-} = require("../db/data/test/index");
+} = require("../../db/data/test/index");
 
 seed(propertyTypesData, usersData, propertiesData, reviewsData).then(() => {
   db.end();

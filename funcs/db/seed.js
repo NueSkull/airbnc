@@ -1,6 +1,6 @@
 const db = require("./connection");
 const format = require("pg-format");
-const jsonToArray = require("../utilities/jsonToArray");
+const jsonToArray = require("../../utilities/jsonToArray");
 
 async function seed(propertyTypesData, usersData, propertiesData, reviewsData) {
   // Table Drops

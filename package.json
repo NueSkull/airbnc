@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "seed": "script/seed-run.js"
+    "test-db": "jest db",
+    "seed": "node funcs/db/seed-run.js",
+    "createdb": "psql -f db/create-database.sql"
   },
   "repository": {
     "type": "git",
