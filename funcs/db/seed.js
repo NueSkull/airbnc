@@ -1,11 +1,14 @@
 const db = require("./connection");
 const format = require("pg-format");
-const jsonToArray = require("../../utilities/db/jsonToArray");
-const createReferenceTable = require("../../utilities/db/createReferenceTable");
-const mapAdjustedData = require("../../utilities/db/mapAdjustedData");
-const mergeNames = require("../../utilities/db/mergeNames");
-const arrangeArray = require("../../utilities/db/arrangeArray");
-// maybe group above
+const {
+  jsonToArray,
+  createReferenceTable,
+  mapAdjustedData,
+  mergeNames,
+  arrangeArray,
+  mapAmenities,
+  getUniqueAmenities,
+} = require("../../utilities/utilities.js");
 
 async function seed(
   propertyTypesData,
@@ -17,6 +20,7 @@ async function seed(
   bookingsData
 ) {
   // Table Drops
+
   await db.query(`DROP TABLE IF EXISTS bookings`);
   await db.query(`DROP TABLE IF EXISTS favourites;`);
   await db.query(`DROP TABLE IF EXISTS images;`);
@@ -26,6 +30,7 @@ async function seed(
   await db.query(`DROP TABLE IF EXISTS users;`);
 
   // Property Types
+
   await db.query(`CREATE TABLE property_types (
         property_type VARCHAR PRIMARY KEY NOT NULL,
         description TEXT NOT NULL
@@ -39,6 +44,7 @@ async function seed(
   );
 
   // Users
+
   await db.query(`CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     first_name VARCHAR NOT NULL,
@@ -58,6 +64,7 @@ async function seed(
   );
 
   // Properties
+
   await db.query(`CREATE TABLE properties (
     property_id SERIAL PRIMARY KEY,
     host_id INT NOT NULL REFERENCES users(user_id),
