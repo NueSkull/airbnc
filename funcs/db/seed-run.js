@@ -10,6 +10,13 @@ const {
   usersData,
 } = require("../../db/data/test/index");
 
-seed(propertyTypesData, usersData, propertiesData, reviewsData).then(() => {
+seed(
+  propertyTypesData,
+  usersData,
+  propertiesData,
+  reviewsData,
+  imagesData,
+  favouritesData
+).then(() => {
   db.end();
 });

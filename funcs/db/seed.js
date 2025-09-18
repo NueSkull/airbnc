@@ -6,8 +6,15 @@ const mapAdjustedData = require("../../utilities/db/mapAdjustedData");
 const mergeNames = require("../../utilities/db/mergeNames");
 const arrangeArray = require("../../utilities/db/arrangeArray");
 
-async function seed(propertyTypesData, usersData, propertiesData, reviewsData) {
+async function seed(
+  propertyTypesData,
+  usersData,
+  propertiesData,
+  reviewsData,
+  imageData
+) {
   // Table Drops
+  await db.query(`DROP TABLE IF EXISTS images;`);
   await db.query(`DROP TABLE IF EXISTS reviews;`);
   await db.query(`DROP TABLE IF EXISTS properties;`);
   await db.query(`DROP TABLE IF EXISTS property_types;`);
@@ -86,7 +93,7 @@ async function seed(propertyTypesData, usersData, propertiesData, reviewsData) {
 
   // Reviews
 
-  db.query(`CREATE TABLE reviews (
+  await db.query(`CREATE TABLE reviews (
     review_id SERIAL PRIMARY KEY,
     property_id INT NOT NULL REFERENCES properties(property_id),
     guest_id INT NOT NULL REFERENCES users(user_id),
@@ -101,7 +108,7 @@ async function seed(propertyTypesData, usersData, propertiesData, reviewsData) {
     "property_id"
   );
 
-  const remapPropertyIds = await mapAdjustedData(
+  const remapPropertyIds = mapAdjustedData(
     reviewsData,
     "property_name",
     "property_id",
@@ -119,6 +126,29 @@ async function seed(propertyTypesData, usersData, propertiesData, reviewsData) {
     format(
       "INSERT INTO reviews (guest_id, property_id, rating, comment, created_at) VALUES %L RETURNING *",
       jsonToArray(remapUsersReviews)
+    )
+  );
+
+  // Imagery
+
+  await db.query(`CREATE TABLE images (
+    image_id SERIAL PRIMARY KEY,
+    property_id INT NOT NULL REFERENCES properties(property_id),
+    image_url VARCHAR NOT NULL,
+    alt_text VARCHAR NOT NULL
+    );`);
+
+  const remapPropertyIdImages = mapAdjustedData(
+    imageData,
+    "property_name",
+    "property_id",
+    propertyReferenceTable
+  );
+
+  const { rows: insertedImages } = await db.query(
+    format(
+      "INSERT INTO images (property_id, image_url, alt_text) VALUES %L RETURNING *;",
+      jsonToArray(remapPropertyIdImages)
     )
   );
 }
