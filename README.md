@@ -45,3 +45,11 @@ Now it's time to create the tables and insert data, use the command below.
 ```
 npm run seed
 ```
+
+### Viewing the tables
+
+The tables have been created and populated with data, you can view them directly using `psql` followed by `\c airbnc_test`. Using standard SQL query statements you can view the tables and their details. For example.
+
+```
+SELECT * FROM users;
+```
