@@ -21,6 +21,7 @@ async function seed(
 ) {
   // Table Drops
 
+  await db.query(`DROP TABLE IF EXISTS properties_amenities;`);
   await db.query(`DROP TABLE IF EXISTS amenities;`);
   await db.query(`DROP TABLE IF EXISTS bookings;`);
   await db.query(`DROP TABLE IF EXISTS favourites;`);
@@ -226,7 +227,7 @@ async function seed(
     )
   );
 
-  // Ameneties Table
+  // Amenities Table
 
   await db.query(`CREATE TABLE amenities (
     amenity VARCHAR PRIMARY KEY
@@ -236,8 +237,36 @@ async function seed(
 
   const { rows: insertedAmenities } = await db.query(
     format(
-      "INSERT INTO amenities (amenity) VALUES %L RETURNING *",
+      "INSERT INTO amenities (amenity) VALUES %L RETURNING *;",
       getAmenities
+    )
+  );
+
+  // Properties_Amenities
+
+  await db.query(`CREATE TABLE properties_amenities (
+    property_amenity_id SERIAL PRIMARY KEY,
+    property_id INT NOT NULL REFERENCES properties(property_id),
+    amenity_slug VARCHAR NOT NULL REFERENCES amenities(amenity)
+    );`);
+
+  const mappedPropertiesAmenities = mapAdjustedData(
+    propertiesData,
+    "name",
+    "property_id",
+    propertyReferenceTable
+  );
+
+  const mappedAmenities = mapAmenities(
+    mappedPropertiesAmenities,
+    "property_id",
+    "amenities"
+  );
+
+  const { rows: insertedPropertyAmenities } = await db.query(
+    format(
+      "INSERT INTO properties_amenities (property_id, amenity_slug) VALUES %L RETURNING *;",
+      jsonToArray(mappedAmenities)
     )
   );
 }

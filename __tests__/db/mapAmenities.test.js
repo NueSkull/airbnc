@@ -38,19 +38,19 @@ describe("mapAmenities", () => {
   });
   test("create a object containing key values pairs of, passed param 1 (name) and each of passed param 2 (amenity)", () => {
     expect(mapAmenities(sampleSingle, "name", "amenities")).toEqual([
-      { "Modern Apartment in City Center": "WiFi" },
-      { "Modern Apartment in City Center": "TV" },
-      { "Modern Apartment in City Center": "Kitchen" },
+      { name: "Modern Apartment in City Center", amenities: "WiFi" },
+      { name: "Modern Apartment in City Center", amenities: "TV" },
+      { name: "Modern Apartment in City Center", amenities: "Kitchen" },
     ]);
   });
   test("create multiple of above.", () => {
     expect(mapAmenities(sampleMulti, "name", "amenities")).toEqual([
-      { "Modern Apartment in City Center": "WiFi" },
-      { "Modern Apartment in City Center": "TV" },
-      { "Modern Apartment in City Center": "Kitchen" },
-      { "Cosy Family House": "WiFi" },
-      { "Cosy Family House": "Parking" },
-      { "Cosy Family House": "Kitchen" },
+      { name: "Modern Apartment in City Center", amenities: "WiFi" },
+      { name: "Modern Apartment in City Center", amenities: "TV" },
+      { name: "Modern Apartment in City Center", amenities: "Kitchen" },
+      { name: "Cosy Family House", amenities: "WiFi" },
+      { name: "Cosy Family House", amenities: "Parking" },
+      { name: "Cosy Family House", amenities: "Kitchen" },
     ]);
   });
 });
