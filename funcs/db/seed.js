@@ -5,6 +5,7 @@ const createReferenceTable = require("../../utilities/db/createReferenceTable");
 const mapAdjustedData = require("../../utilities/db/mapAdjustedData");
 const mergeNames = require("../../utilities/db/mergeNames");
 const arrangeArray = require("../../utilities/db/arrangeArray");
+// maybe group above
 
 async function seed(
   propertyTypesData,
@@ -12,9 +13,11 @@ async function seed(
   propertiesData,
   reviewsData,
   imageData,
-  favouritesData
+  favouritesData,
+  bookingsData
 ) {
   // Table Drops
+  await db.query(`DROP TABLE IF EXISTS bookings`);
   await db.query(`DROP TABLE IF EXISTS favourites;`);
   await db.query(`DROP TABLE IF EXISTS images;`);
   await db.query(`DROP TABLE IF EXISTS reviews;`);
@@ -180,6 +183,38 @@ async function seed(
     format(
       "INSERT INTO favourites (guest_id, property_id) VALUES %L RETURNING *;",
       jsonToArray(remapFavouritesProperties)
+    )
+  );
+
+  // Bookings
+
+  await db.query(`CREATE TABLE bookings (
+    booking_id SERIAL PRIMARY KEY,
+    property_id INT NOT NULL REFERENCES properties(property_id),
+    guest_id INT NOT NULL REFERENCES users(user_id),
+    check_in_date DATE NOT NULL,
+    check_out_date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT current_timestamp
+    );`);
+
+  const remapBookingsUsers = mapAdjustedData(
+    bookingsData,
+    "guest_name",
+    "user_id",
+    userReferenceTable
+  );
+
+  const remapBookingsProperties = mapAdjustedData(
+    remapBookingsUsers,
+    "property_name",
+    "property_id",
+    propertyReferenceTable
+  );
+
+  const { row: insertedBookings } = await db.query(
+    format(
+      "INSERT INTO bookings (property_id, guest_id, check_in_date, check_out_date) VALUES %L RETURNING *",
+      jsonToArray(remapBookingsProperties)
     )
   );
 }

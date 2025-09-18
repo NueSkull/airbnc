@@ -16,7 +16,8 @@ seed(
   propertiesData,
   reviewsData,
   imagesData,
-  favouritesData
+  favouritesData,
+  bookingsData
 ).then(() => {
   db.end();
 });
