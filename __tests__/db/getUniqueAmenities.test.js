@@ -39,20 +39,28 @@ describe("getUniqueAmenities", () => {
     expect(Array.isArray(getUniqueAmenities())).toBe(true);
   });
   test("return only the amenity when passed 1", () => {
-    expect(getUniqueAmenities(sampleAmenity)).toEqual(["WiFi"]);
+    expect(getUniqueAmenities(sampleAmenity)).toEqual([["WiFi"]]);
   });
   test("returns all the amenities in an array when given multiple", () => {
-    expect(getUniqueAmenities(sampleSingle)).toEqual(["WiFi", "TV", "Kitchen"]);
+    expect(getUniqueAmenities(sampleSingle)).toEqual([
+      ["WiFi"],
+      ["TV"],
+      ["Kitchen"],
+    ]);
   });
   test("only returns unique amenities", () => {
-    expect(getUniqueAmenities(sampleDups)).toEqual(["WiFi", "TV", "Kitchen"]);
+    expect(getUniqueAmenities(sampleDups)).toEqual([
+      ["WiFi"],
+      ["TV"],
+      ["Kitchen"],
+    ]);
   });
   test("iterates over multiple objects", () => {
     expect(getUniqueAmenities(sampleMulti)).toEqual([
-      "WiFi",
-      "TV",
-      "Kitchen",
-      "Parking",
+      ["WiFi"],
+      ["TV"],
+      ["Kitchen"],
+      ["Parking"],
     ]);
   });
 });

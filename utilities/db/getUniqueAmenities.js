@@ -1,13 +1,15 @@
 function getUniqueAmenities(data) {
-  let uniqueAmenities = [];
+  let allAmenities = [];
   for (const property in data) {
     for (const item in data[property].amenities) {
       const currentItem = data[property].amenities[item];
-      if (!uniqueAmenities.includes(currentItem)) {
-        uniqueAmenities.push(currentItem);
+      if (!allAmenities.includes(currentItem)) {
+        allAmenities.push(currentItem);
       }
     }
   }
+
+  const uniqueAmenities = allAmenities.map((amenity) => [amenity]);
   return uniqueAmenities;
 }
 

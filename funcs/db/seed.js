@@ -21,7 +21,8 @@ async function seed(
 ) {
   // Table Drops
 
-  await db.query(`DROP TABLE IF EXISTS bookings`);
+  await db.query(`DROP TABLE IF EXISTS amenities;`);
+  await db.query(`DROP TABLE IF EXISTS bookings;`);
   await db.query(`DROP TABLE IF EXISTS favourites;`);
   await db.query(`DROP TABLE IF EXISTS images;`);
   await db.query(`DROP TABLE IF EXISTS reviews;`);
@@ -218,10 +219,25 @@ async function seed(
     propertyReferenceTable
   );
 
-  const { row: insertedBookings } = await db.query(
+  const { rows: insertedBookings } = await db.query(
     format(
       "INSERT INTO bookings (property_id, guest_id, check_in_date, check_out_date) VALUES %L RETURNING *",
       jsonToArray(remapBookingsProperties)
+    )
+  );
+
+  // Ameneties Table
+
+  await db.query(`CREATE TABLE amenities (
+    amenity VARCHAR PRIMARY KEY
+    );`);
+
+  const getAmenities = getUniqueAmenities(propertiesData);
+
+  const { rows: insertedAmenities } = await db.query(
+    format(
+      "INSERT INTO amenities (amenity) VALUES %L RETURNING *",
+      getAmenities
     )
   );
 }
