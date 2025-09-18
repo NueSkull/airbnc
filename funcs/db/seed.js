@@ -11,9 +11,11 @@ async function seed(
   usersData,
   propertiesData,
   reviewsData,
-  imageData
+  imageData,
+  favouritesData
 ) {
   // Table Drops
+  await db.query(`DROP TABLE IF EXISTS favourites;`);
   await db.query(`DROP TABLE IF EXISTS images;`);
   await db.query(`DROP TABLE IF EXISTS reviews;`);
   await db.query(`DROP TABLE IF EXISTS properties;`);
@@ -64,7 +66,7 @@ async function seed(
     );`);
 
   const mergeUserNames = mergeNames(insertedUsers);
-  const hostReferenceTable = createReferenceTable(
+  const userReferenceTable = createReferenceTable(
     mergeUserNames,
     "name",
     "user_id"
@@ -73,7 +75,7 @@ async function seed(
     propertiesData,
     "host_name",
     "user_id",
-    hostReferenceTable
+    userReferenceTable
   );
   const rearrangedProperties = arrangeArray(mappedUsersProperties, [
     "name",
@@ -119,7 +121,7 @@ async function seed(
     remapPropertyIds,
     "guest_name",
     "user_id",
-    hostReferenceTable
+    userReferenceTable
   );
 
   const { rows: insertedReviews } = await db.query(
@@ -149,6 +151,35 @@ async function seed(
     format(
       "INSERT INTO images (property_id, image_url, alt_text) VALUES %L RETURNING *;",
       jsonToArray(remapPropertyIdImages)
+    )
+  );
+
+  // Favourites
+
+  await db.query(`CREATE TABLE favourites (
+    favourite_id SERIAL PRIMARY KEY,
+    guest_id INT NOT NULL REFERENCES users(user_id),
+    property_id INT NOT NULL REFERENCES properties(property_id)
+    );`);
+
+  const remapFavouritesUsers = mapAdjustedData(
+    favouritesData,
+    "guest_name",
+    "user_id",
+    userReferenceTable
+  );
+
+  const remapFavouritesProperties = mapAdjustedData(
+    remapFavouritesUsers,
+    "property_name",
+    "property_id",
+    propertyReferenceTable
+  );
+
+  const { rows: insertedFavourites } = await db.query(
+    format(
+      "INSERT INTO favourites (guest_id, property_id) VALUES %L RETURNING *;",
+      jsonToArray(remapFavouritesProperties)
     )
   );
 }
