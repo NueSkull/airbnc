@@ -1,5 +1,5 @@
 function createReferenceTable(table, newKey, newValue) {
-  let returnObj = {};
+  const returnObj = {};
   table.forEach((row) => {
     returnObj[row[newKey]] = row[newValue];
   });

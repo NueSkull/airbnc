@@ -1,7 +1,7 @@
 function makeJsonArray(data) {
-  let rows = new Array();
+  const rows = new Array();
 
-  for (let obj in data) {
+  for (const obj in data) {
     rows.push(Object.values(data[obj]));
   }
   return rows;

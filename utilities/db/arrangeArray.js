@@ -1,6 +1,6 @@
 function arrangeArray(originalArray, order) {
   return originalArray.map((data) => {
-    let returnObj = {};
+    const returnObj = {};
     for (const newKey of order) {
       returnObj[newKey] = data[newKey];
     }

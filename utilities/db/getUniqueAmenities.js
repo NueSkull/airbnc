@@ -1,5 +1,5 @@
 function getUniqueAmenities(data) {
-  let allAmenities = [];
+  const allAmenities = [];
   for (const property in data) {
     for (const item in data[property].amenities) {
       const currentItem = data[property].amenities[item];

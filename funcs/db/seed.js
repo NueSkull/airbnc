@@ -38,9 +38,9 @@ async function seed(
         description TEXT NOT NULL
         );`);
 
-  const { rows: insertedPropertyTypes } = await db.query(
+  await db.query(
     format(
-      "INSERT INTO property_types (property_type, description) VALUES %L RETURNING *",
+      "INSERT INTO property_types (property_type, description) VALUES %L;",
       jsonToArray(propertyTypesData)
     )
   );
@@ -60,7 +60,7 @@ async function seed(
 
   const { rows: insertedUsers } = await db.query(
     format(
-      "INSERT INTO users (first_name, surname, email, phone_number, is_host, avatar) VALUES %L RETURNING *",
+      "INSERT INTO users (first_name, surname, email, phone_number, is_host, avatar) VALUES %L RETURNING *;",
       jsonToArray(usersData)
     )
   );
@@ -77,12 +77,8 @@ async function seed(
     description TEXT
     );`);
 
-  const mergeUserNames = mergeNames(insertedUsers);
-  const userReferenceTable = createReferenceTable(
-    mergeUserNames,
-    "name",
-    "user_id"
-  );
+  const fullNames = mergeNames(insertedUsers);
+  const userReferenceTable = createReferenceTable(fullNames, "name", "user_id");
   const mappedUsersProperties = mapAdjustedData(
     propertiesData,
     "host_name",
@@ -100,7 +96,7 @@ async function seed(
 
   const { rows: insertedProperties } = await db.query(
     format(
-      "INSERT INTO properties (name, property_type, location, price_per_night, description, host_id) VALUES %L RETURNING *",
+      "INSERT INTO properties (name, property_type, location, price_per_night, description, host_id) VALUES %L RETURNING *;",
       jsonToArray(rearrangedProperties)
     )
   );
@@ -136,9 +132,9 @@ async function seed(
     userReferenceTable
   );
 
-  const { rows: insertedReviews } = await db.query(
+  await db.query(
     format(
-      "INSERT INTO reviews (guest_id, property_id, rating, comment, created_at) VALUES %L RETURNING *",
+      "INSERT INTO reviews (guest_id, property_id, rating, comment, created_at) VALUES %L;",
       jsonToArray(remapUsersReviews)
     )
   );
@@ -159,9 +155,9 @@ async function seed(
     propertyReferenceTable
   );
 
-  const { rows: insertedImages } = await db.query(
+  await db.query(
     format(
-      "INSERT INTO images (property_id, image_url, alt_text) VALUES %L RETURNING *;",
+      "INSERT INTO images (property_id, image_url, alt_text) VALUES %L;",
       jsonToArray(remapPropertyIdImages)
     )
   );
@@ -188,9 +184,9 @@ async function seed(
     propertyReferenceTable
   );
 
-  const { rows: insertedFavourites } = await db.query(
+  await db.query(
     format(
-      "INSERT INTO favourites (guest_id, property_id) VALUES %L RETURNING *;",
+      "INSERT INTO favourites (guest_id, property_id) VALUES %L;",
       jsonToArray(remapFavouritesProperties)
     )
   );
@@ -213,17 +209,17 @@ async function seed(
     userReferenceTable
   );
 
-  const remapBookingsProperties = mapAdjustedData(
+  const propertiesWithIds = mapAdjustedData(
     remapBookingsUsers,
     "property_name",
     "property_id",
     propertyReferenceTable
   );
 
-  const { rows: insertedBookings } = await db.query(
+  await db.query(
     format(
-      "INSERT INTO bookings (property_id, guest_id, check_in_date, check_out_date) VALUES %L RETURNING *",
-      jsonToArray(remapBookingsProperties)
+      "INSERT INTO bookings (property_id, guest_id, check_in_date, check_out_date) VALUES %L;",
+      jsonToArray(propertiesWithIds)
     )
   );
 
@@ -235,11 +231,8 @@ async function seed(
 
   const getAmenities = getUniqueAmenities(propertiesData);
 
-  const { rows: insertedAmenities } = await db.query(
-    format(
-      "INSERT INTO amenities (amenity) VALUES %L RETURNING *;",
-      getAmenities
-    )
+  await db.query(
+    format("INSERT INTO amenities (amenity) VALUES %L;", getAmenities)
   );
 
   // Properties_Amenities
@@ -263,9 +256,9 @@ async function seed(
     "amenities"
   );
 
-  const { rows: insertedPropertyAmenities } = await db.query(
+  await db.query(
     format(
-      "INSERT INTO properties_amenities (property_id, amenity_slug) VALUES %L RETURNING *;",
+      "INSERT INTO properties_amenities (property_id, amenity_slug) VALUES %L;",
       jsonToArray(mappedAmenities)
     )
   );
