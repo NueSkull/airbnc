@@ -118,15 +118,15 @@ async function seed(
     "property_id"
   );
 
-  const propertyNameToId = mapAdjustedData(
+  const remapPropertyIds = mapAdjustedData(
     reviewsData,
     "property_name",
     "property_id",
     propertyReferenceTable
   );
 
-  const reviewsWithUserId = mapAdjustedData(
-    propertyNameToId,
+  const remapUsersReviews = mapAdjustedData(
+    remapPropertyIds,
     "guest_name",
     "user_id",
     userReferenceTable
@@ -135,7 +135,7 @@ async function seed(
   await db.query(
     format(
       "INSERT INTO reviews (guest_id, property_id, rating, comment, created_at) VALUES %L;",
-      jsonToArray(reviewsWithUserId)
+      jsonToArray(remapUsersReviews)
     )
   );
 
@@ -148,7 +148,7 @@ async function seed(
     alt_text VARCHAR NOT NULL
     );`);
 
-  const propertyIdImages = mapAdjustedData(
+  const remapPropertyIdImages = mapAdjustedData(
     imageData,
     "property_name",
     "property_id",
@@ -158,7 +158,7 @@ async function seed(
   await db.query(
     format(
       "INSERT INTO images (property_id, image_url, alt_text) VALUES %L;",
-      jsonToArray(propertyIdImages)
+      jsonToArray(remapPropertyIdImages)
     )
   );
 
@@ -170,15 +170,15 @@ async function seed(
     property_id INT NOT NULL REFERENCES properties(property_id)
     );`);
 
-  const favouriteUsers = mapAdjustedData(
+  const remapFavouritesUsers = mapAdjustedData(
     favouritesData,
     "guest_name",
     "user_id",
     userReferenceTable
   );
 
-  const favouriteProperties = mapAdjustedData(
-    favouriteUsers,
+  const remapFavouritesProperties = mapAdjustedData(
+    remapFavouritesUsers,
     "property_name",
     "property_id",
     propertyReferenceTable
@@ -187,7 +187,7 @@ async function seed(
   await db.query(
     format(
       "INSERT INTO favourites (guest_id, property_id) VALUES %L;",
-      jsonToArray(favouriteProperties)
+      jsonToArray(remapFavouritesProperties)
     )
   );
 
@@ -202,7 +202,7 @@ async function seed(
     created_at TIMESTAMP DEFAULT current_timestamp
     );`);
 
-  const bookingWithUserIds = mapAdjustedData(
+  const remapBookingsUsers = mapAdjustedData(
     bookingsData,
     "guest_name",
     "user_id",
@@ -210,7 +210,7 @@ async function seed(
   );
 
   const propertiesWithIds = mapAdjustedData(
-    bookingWithUserIds,
+    remapBookingsUsers,
     "property_name",
     "property_id",
     propertyReferenceTable
@@ -243,7 +243,7 @@ async function seed(
     amenity_slug VARCHAR NOT NULL REFERENCES amenities(amenity)
     );`);
 
-  const propertiesWithAmenties = mapAdjustedData(
+  const mappedPropertiesAmenities = mapAdjustedData(
     propertiesData,
     "name",
     "property_id",
@@ -251,7 +251,7 @@ async function seed(
   );
 
   const mappedAmenities = mapAmenities(
-    propertiesWithAmenties,
+    mappedPropertiesAmenities,
     "property_id",
     "amenities"
   );
