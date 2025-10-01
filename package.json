@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "test-db": "jest db",
-    "seed": "node funcs/db/seed-run.js",
+    "test-app": "jest app",
+    "seed": "node ./db/seeding/seed-run.js",
     "createdb": "psql -f db/create-database.sql"
   },
   "repository": {

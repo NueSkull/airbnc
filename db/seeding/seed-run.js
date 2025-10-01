@@ -1,5 +1,5 @@
 const seed = require("./seed");
-const db = require("./connection");
+const db = require("../connection");
 const {
   bookingsData,
   favouritesData,
@@ -8,7 +8,7 @@ const {
   propertyTypesData,
   reviewsData,
   usersData,
-} = require("../../db/data/test/index");
+} = require("../data/test/index");
 
 seed(
   propertyTypesData,
