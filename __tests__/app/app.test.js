@@ -4,9 +4,9 @@ const db = require("../../funcs/db/connection");
 const seed = require("../../funcs/db/seed");
 const testData = require("../../db/data/test/index");
 
-beforeEach(() => {
-  seed(testData);
-});
+// beforeEach(() => {
+//   seed(testData);
+// });
 
 afterAll(() => {
   db.end();
@@ -20,8 +20,14 @@ describe("app", () => {
     test("should respond with status 200", async () => {
       await request(app).get("/api/properties").expect(200);
     });
-    test.todo("response is properties object");
-    test.todo("response of properties is correct length");
+    test("response is properties object", async () => {
+      const { body } = await request(app).get("/api/properties");
+      expect(body).toHaveProperty("properties");
+    });
+    test("response of properties is correct length", async () => {
+      const { body } = await request(app).get("/api/properties");
+      expect(body.properties.length).toBe(11);
+    });
     test.todo("response of properties is sorted by most to least favourite");
   });
 });
