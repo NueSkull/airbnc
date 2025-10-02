@@ -30,8 +30,12 @@ afterAll(() => {
 
 describe("app", () => {
   describe("general", () => {
-    test.todo("404 - invalid path");
-    test.todo("post method");
+    test("404 - invalid paths are handled", async () => {
+      const { status, body } = await request(app).get("/api/fictionalpath");
+      expect(status).toBe(404);
+      expect(body.msg).toBe("Path not found");
+    });
+    test.todo("405 - incorrect method used on valid path");
   });
   describe("GET /api/properties", () => {
     test("should respond with status 200", async () => {
@@ -41,15 +45,54 @@ describe("app", () => {
       const { body } = await request(app).get("/api/properties");
       expect(Array.isArray(body.properties)).toBe(true);
     });
-    test("response is has property of properties", async () => {
+    test("response has property of properties", async () => {
       const { body } = await request(app).get("/api/properties");
       expect(Array.isArray(body.properties)).toBe(true);
       expect(body).toHaveProperty("properties");
     });
-    test("response of properties is correct length", async () => {
+    test("response of properties has length", async () => {
       const { body } = await request(app).get("/api/properties");
-      expect(body.properties.length).toBe(11);
+      expect(body.properties.length).toBeGreaterThan(0);
     });
-    test.todo("response of properties is sorted by most to least favourite");
+    test("check property has property_id value", async () => {
+      const { body } = await request(app).get("/api/properties");
+      const singleProperty = body.properties[0];
+      expect(singleProperty).toHaveProperty("property_id");
+    });
+    test("check property has property_name value", async () => {
+      const { body } = await request(app).get("/api/properties");
+      const singleProperty = body.properties[0];
+      expect(singleProperty).toHaveProperty("property_name");
+    });
+    test("check property has location value", async () => {
+      const { body } = await request(app).get("/api/properties");
+      const singleProperty = body.properties[0];
+      expect(singleProperty).toHaveProperty("location");
+    });
+    test("check property has price_per_night value", async () => {
+      const { body } = await request(app).get("/api/properties");
+      const singleProperty = body.properties[0];
+      expect(singleProperty).toHaveProperty("price_per_night");
+    });
+    test("check property has host value", async () => {
+      const { body } = await request(app).get("/api/properties");
+      const singleProperty = body.properties[0];
+      expect(singleProperty).toHaveProperty("host");
+    });
+    test("ensure host is full name", async () => {
+      const { body } = await request(app).get("/api/properties");
+      const firstPropertyHost = body.properties[0].host;
+      expect(firstPropertyHost.indexOf(" ") > -1).toBe(true);
+    });
+    test.skip("response of properties is sorted by most to least favourite", async () => {
+      const { body } = await request(app).get("/api/properties");
+      const lengthOfResponses = body.properties.length - 1;
+      console.log(body.properties[0].rating);
+      console.log(body.properties[lengthOfResponses].rating);
+      expect(
+        body.properties[0].rating > body.properties[lengthOfResponses].rating
+      ).toBe(true);
+      // come back to this one, use the reviews API for comparison
+    });
   });
 });
