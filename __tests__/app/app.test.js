@@ -94,5 +94,23 @@ describe("app", () => {
       ).toBe(true);
       // come back to this one, use the reviews API for comparison
     });
+    test("when passed a maxprice query, returned properties do not exceed that price", async () => {
+      const { body } = await request(app).get("/api/properties?maxprice=155");
+      const maxCostPerNight = Math.max(
+        ...body.properties.map((property) => {
+          return property.price_per_night;
+        })
+      );
+      expect(maxCostPerNight <= 155).toBe(true);
+    });
+    test("includes properties matching the max value", async () => {
+      const { body } = await request(app).get("/api/properties?maxprice=150");
+      const maxCostPerNight = Math.max(
+        ...body.properties.map((property) => {
+          return property.price_per_night;
+        })
+      );
+      expect(maxCostPerNight === 150).toBe(true);
+    });
   });
 });
