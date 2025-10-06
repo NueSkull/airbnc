@@ -104,13 +104,13 @@ describe("app", () => {
       expect(maxCostPerNight <= 155).toBe(true);
     });
     test("includes properties matching the max value", async () => {
-      const { body } = await request(app).get("/api/properties?maxprice=150");
+      const { body } = await request(app).get("/api/properties?maxprice=200");
       const maxCostPerNight = Math.max(
         ...body.properties.map((property) => {
           return property.price_per_night;
         })
       );
-      expect(maxCostPerNight === 150).toBe(true);
+      expect(maxCostPerNight === 200).toBe(true);
     });
     test("when passed a minprice query, returned properties do not fall below that price", async () => {
       const { body } = await request(app).get("/api/properties?minprice=155");
@@ -122,13 +122,29 @@ describe("app", () => {
       expect(minCostPerNight >= 155).toBe(true);
     });
     test("includes properties matching the min value", async () => {
-      const { body } = await request(app).get("/api/properties?minprice=150");
-      const minCostPerNight = Math.max(
+      const { body } = await request(app).get("/api/properties?minprice=110");
+      const minCostPerNight = Math.min(
         ...body.properties.map((property) => {
           return property.price_per_night;
         })
       );
-      expect(minCostPerNight === 150).toBe(true);
+      expect(minCostPerNight === 110).toBe(true);
+    });
+    test.only("when using both queries, brings back those between the passed values", async () => {
+      const { body } = await request(app).get(
+        "/api/properties?minprice=100&maxprice=200"
+      );
+      const minCostPerNight = Math.min(
+        ...body.properties.map((property) => {
+          return property.price_per_night;
+        })
+      );
+      const maxCostPerNight = Math.max(
+        ...body.properties.map((property) => {
+          return property.price_per_night;
+        })
+      );
+      expect(minCostPerNight >= 100 && maxCostPerNight <= 200).toBe(true);
     });
   });
 });
