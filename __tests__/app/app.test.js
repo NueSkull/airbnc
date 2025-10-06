@@ -87,12 +87,14 @@ describe("app", () => {
     test.skip("response of properties is sorted by most to least favourite", async () => {
       const { body } = await request(app).get("/api/properties");
       const lengthOfResponses = body.properties.length - 1;
-      console.log(body.properties[0].rating);
-      console.log(body.properties[lengthOfResponses].rating);
       expect(
         body.properties[0].rating > body.properties[lengthOfResponses].rating
       ).toBe(true);
       // come back to this one, use the reviews API for comparison
+    });
+    test("returns properties without a review too", async () => {
+      const { body } = await request(app).get("/api/properties");
+      expect(body.properties.length).toBe(11);
     });
     test("when passed a maxprice query, returned properties do not exceed that price", async () => {
       const { body } = await request(app).get("/api/properties?maxprice=155");
@@ -145,6 +147,19 @@ describe("app", () => {
         })
       );
       expect(minCostPerNight >= 100 && maxCostPerNight <= 200).toBe(true);
+    });
+    test("accepts a query of property_type that returns back properties of that type", async () => {
+      const studio = request(app).get("/api/properties?property_type=Studio");
+      const apartment = request(app).get(
+        "/api/properties?property_type=Apartment"
+      );
+      const house = request(app).get("/api/properties?property_type=House");
+      const [studioResponse, apartmentResponse, houseResponse] =
+        await Promise.all([studio, apartment, house]);
+
+      expect(studioResponse.body.properties.length).toBe(4);
+      expect(apartmentResponse.body.properties.length).toBe(4);
+      expect(houseResponse.body.properties.length).toBe(3);
     });
   });
 });
