@@ -130,7 +130,7 @@ describe("app", () => {
       );
       expect(minCostPerNight === 110).toBe(true);
     });
-    test.only("when using both queries, brings back those between the passed values", async () => {
+    test("when using both queries, brings back those between the passed values", async () => {
       const { body } = await request(app).get(
         "/api/properties?minprice=100&maxprice=200"
       );
