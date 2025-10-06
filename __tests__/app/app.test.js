@@ -161,5 +161,23 @@ describe("app", () => {
       expect(apartmentResponse.body.properties.length).toBe(4);
       expect(houseResponse.body.properties.length).toBe(3);
     });
+    test("API accepts sort query with cost_per_night ", async () => {
+      const { body } = await request(app).get(
+        "/api/properties?sort=cost_per_night"
+      );
+      expect(body.properties[0].price_per_night).toBe("250");
+    });
+    test("API accepts sort query with popularity", async () => {
+      const { body } = await request(app).get(
+        "/api/properties?sort=popularity"
+      );
+      expect(body.properties[0].property_name).toBe("Cosy Family House");
+    });
+    test("API accepts order as ASC", async () => {
+      const { body } = await request(app).get(
+        "/api/properties?sort=cost_per_night&order=ASC"
+      );
+      expect(body.properties[0].price_per_night).toBe("85");
+    });
   });
 });
