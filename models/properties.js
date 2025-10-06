@@ -10,7 +10,7 @@ exports.getProperties = async (
   const validSort = {
     rating: "AVG(r.rating)",
     cost_per_night: "p.price_per_night",
-    popularity: "COUNT(f.property_name)",
+    popularity: "COUNT(f.property_id)",
   };
 
   const validOrder = ["ASC", "DESC"];
@@ -35,7 +35,7 @@ exports.getProperties = async (
     LEFT JOIN reviews as r ON p.property_id = r.property_id \n`;
 
   if (sort === "popularity") {
-    query += `JOIN favourites as f ON p.property_name = f.property_name \n`;
+    query += `JOIN favourites as f ON p.property_id = f.property_id \n`;
   }
   if (maxprice) {
     query += `${whereOrAnd()} p.price_per_night <= $${++queryCount} \n`;
@@ -52,13 +52,8 @@ exports.getProperties = async (
     queries.push(property_type);
   }
 
-  if (sort === "popularity") {
-    // RESUME HERE, group by needs to be on property name for the COUNT order metric
-  } else {
-    query += `GROUP BY p.property_id, p.name, CONCAT(u.first_name,' ', u.surname), p.location, p.price_per_night `;
-  }
-
-  query += `ORDER BY ${sortValue} ${orderValue};`;
+  query += `GROUP BY p.property_id, p.name, CONCAT(u.first_name,' ', u.surname), p.location, p.price_per_night 
+  ORDER BY ${sortValue} ${orderValue};`;
 
   const result = await db.query(query, queries);
   return result.rows;
