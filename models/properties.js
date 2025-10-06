@@ -1,7 +1,9 @@
 const db = require("../db/connection");
 
-exports.getProperties = async (maxprice) => {
+exports.getProperties = async (maxprice, minprice) => {
   const queries = [];
+  let queryCount = 0;
+  let whereOrAnd = queryCount === 0 ? "WHERE" : "AND";
   let query = `SELECT 
     p.property_id, p.name AS property_name, CONCAT(u.first_name,' ', u.surname) as host, p.location, p.price_per_night 
     FROM properties as p
@@ -9,13 +11,20 @@ exports.getProperties = async (maxprice) => {
     JOIN reviews as r ON p.property_id = r.property_id \n`;
 
   if (maxprice) {
-    query += "WHERE p.price_per_night <= $1 \n";
+    query += `${whereOrAnd} p.price_per_night <= $${++queryCount} \n`;
     queries.push(maxprice);
+  }
+
+  if (minprice) {
+    query += `${whereOrAnd} p.price_per_night >= $${++queryCount} \n`;
+    queries.push(minprice);
   }
 
   query += `GROUP BY p.property_id, p.name, CONCAT(u.first_name,' ', u.surname), p.location, p.price_per_night
     ORDER BY AVG(r.rating) DESC;`;
 
+  console.log(query, queries);
   const result = await db.query(query, queries);
+  console.log(result.rows);
   return result.rows;
 };

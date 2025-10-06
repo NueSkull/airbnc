@@ -112,5 +112,23 @@ describe("app", () => {
       );
       expect(maxCostPerNight === 150).toBe(true);
     });
+    test("when passed a minprice query, returned properties do not fall below that price", async () => {
+      const { body } = await request(app).get("/api/properties?minprice=155");
+      const minCostPerNight = Math.min(
+        ...body.properties.map((property) => {
+          return property.price_per_night;
+        })
+      );
+      expect(minCostPerNight >= 155).toBe(true);
+    });
+    test("includes properties matching the min value", async () => {
+      const { body } = await request(app).get("/api/properties?minprice=150");
+      const minCostPerNight = Math.max(
+        ...body.properties.map((property) => {
+          return property.price_per_night;
+        })
+      );
+      expect(minCostPerNight === 150).toBe(true);
+    });
   });
 });
