@@ -37,7 +37,7 @@ describe("app", () => {
     });
     test.todo("405 - incorrect method used on valid path");
   });
-  describe("GET /api/properties", () => {
+  describe("GET /api/properties - OK Responses", () => {
     test("should respond with status 200", async () => {
       await request(app).get("/api/properties").expect(200);
     });
@@ -88,11 +88,12 @@ describe("app", () => {
       const { body } = await request(app).get("/api/properties");
       const lengthOfResponses = body.properties.length - 1;
       expect(
-        body.properties[0].rating > body.properties[lengthOfResponses].rating
+        body.properties[0].favourites >
+          body.properties[lengthOfResponses].favourites
       ).toBe(true);
-      // come back to this one, use the reviews API for comparison
+      // come back to this one, use the favourites API for comparison
     });
-    test("returns properties without a review too", async () => {
+    test("returns all results including properties with and without being favourites", async () => {
       const { body } = await request(app).get("/api/properties");
       expect(body.properties.length).toBe(11);
     });
@@ -178,6 +179,48 @@ describe("app", () => {
         "/api/properties?sort=cost_per_night&order=ASC"
       );
       expect(body.properties[0].price_per_night).toBe("85");
+    });
+  });
+  describe("GET /api/properties - Error Responses", () => {
+    test("Invalid sort query returns 400", async () => {
+      const { status, body } = await request(app).get(
+        "/api/properties?sort=invalidsort"
+      );
+
+      expect(status).toBe(400);
+      expect(body.msg).toBe("Bad Request");
+    });
+    test("Invalid order query returns 400", async () => {
+      const { status, body } = await request(app).get(
+        "/api/properties?order=invalidorder"
+      );
+
+      expect(status).toBe(400);
+      expect(body.msg).toBe("Bad Request");
+    });
+    test("minprice must be numeric", async () => {
+      const { status, body } = await request(app).get(
+        "/api/properties?minprice=textbased"
+      );
+
+      expect(status).toBe(400);
+      expect(body.msg).toBe("minprice must be numeric");
+    });
+    test("maxprice must be numeric", async () => {
+      const { status, body } = await request(app).get(
+        "/api/properties?maxprice=textbased"
+      );
+
+      expect(status).toBe(400);
+      expect(body.msg).toBe("maxprice must be numeric");
+    });
+    test("None existing property_type returns 404", async () => {
+      const { status, body } = await request(app).get(
+        "/api/properties?property_type=caravan"
+      );
+
+      expect(status).toBe(404);
+      expect(body.msg).toBe("No results found");
     });
   });
 });
