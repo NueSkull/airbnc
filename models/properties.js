@@ -4,9 +4,35 @@ exports.getProperties = async (
   maxprice,
   minprice,
   property_type,
-  sort = "COUNT(f.property_id)",
-  order = "DESC"
+  sort,
+  order
 ) => {
+  let sortValue;
+  let orderValue;
+
+  const validSort = {
+    cost_per_night: "p.price_per_night",
+    popularity: "COUNT(f.property_id)",
+  };
+
+  const validOrder = ["ASC", "DESC"];
+
+  if (sort && !validSort[sort]) {
+    return Promise.reject({ status: 400, msg: "Invalid Sort Property" });
+  } else if (sort && validSort[sort]) {
+    sortValue = validSort[sort];
+  } else {
+    sortValue = "COUNT(f.property_id)";
+  }
+
+  if (order && !validOrder.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid Order Property" });
+  } else if (order && validOrder.includes(order)) {
+    orderValue = order;
+  } else {
+    orderValue = "DESC";
+  }
+
   const queries = [];
   let queryCount = 0;
   const whereOrAnd = function () {
@@ -34,12 +60,24 @@ exports.getProperties = async (
   }
 
   if (property_type) {
+    const availablePropertyTypesQuery = await db.query(
+      `SELECT DISTINCT(property_type) FROM property_types`
+    );
+    const propertyTypes = availablePropertyTypesQuery.rows.map((propType) => {
+      return propType.property_type;
+    });
+    if (!propertyTypes.includes(property_type)) {
+      return Promise.reject({
+        status: 404,
+        msg: "No results found for property_type",
+      });
+    }
     query += `${whereOrAnd()} p.property_type = $${++queryCount} \n`;
     queries.push(property_type);
   }
 
   query += `GROUP BY p.property_id, p.name, CONCAT(u.first_name,' ', u.surname), p.location, p.price_per_night
-  ORDER BY ${sort} ${order};`;
+  ORDER BY ${sortValue} ${orderValue};`;
 
   const result = await db.query(query, queries);
   return result.rows;

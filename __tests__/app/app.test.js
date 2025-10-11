@@ -182,37 +182,37 @@ describe("app", () => {
     });
   });
   describe("GET /api/properties - Error Responses", () => {
-    test("Invalid sort query returns 400", async () => {
+    test("Invalid sort query returns 400 and message Invalid Sort Property", async () => {
       const { status, body } = await request(app).get(
         "/api/properties?sort=invalidsort"
       );
 
       expect(status).toBe(400);
-      expect(body.msg).toBe("Bad Request");
+      expect(body.msg).toBe("Invalid Sort Property");
     });
-    test("Invalid order query returns 400", async () => {
+    test("Invalid order query returns 400 and message Invalid Order Property", async () => {
       const { status, body } = await request(app).get(
         "/api/properties?order=invalidorder"
       );
 
       expect(status).toBe(400);
-      expect(body.msg).toBe("Bad Request");
+      expect(body.msg).toBe("Invalid Order Property");
     });
-    test("minprice must be numeric", async () => {
+    test("None numeric minprice will return Status 400 and msg 'Price Must Be Numeric'", async () => {
       const { status, body } = await request(app).get(
         "/api/properties?minprice=textbased"
       );
 
       expect(status).toBe(400);
-      expect(body.msg).toBe("minprice must be numeric");
+      expect(body.msg).toBe("Price Must Be Numeric");
     });
-    test("maxprice must be numeric", async () => {
+    test("None numeric maxprice will return Status 400 and msg 'Price Must Be Numeric'", async () => {
       const { status, body } = await request(app).get(
         "/api/properties?maxprice=textbased"
       );
 
       expect(status).toBe(400);
-      expect(body.msg).toBe("maxprice must be numeric");
+      expect(body.msg).toBe("Price Must Be Numeric");
     });
     test("None existing property_type returns 404", async () => {
       const { status, body } = await request(app).get(
@@ -220,7 +220,7 @@ describe("app", () => {
       );
 
       expect(status).toBe(404);
-      expect(body.msg).toBe("No results found");
+      expect(body.msg).toBe("No results found for property_type");
     });
   });
 });
