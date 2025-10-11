@@ -35,7 +35,14 @@ describe("app", () => {
       expect(status).toBe(404);
       expect(body.msg).toBe("Path not found");
     });
-    test.todo("405 - incorrect method used on valid path");
+    test("405 - incorrect method used on valid path", () => {
+      const methods = ["post", "put", "patch", "delete"];
+      methods.forEach(async (method) => {
+        const { status, body } = await request(app)[method]("/api/properties");
+        expect(status).toBe(405);
+        expect(body.msg).toBe("Invalid Method.");
+      });
+    });
   });
   describe("GET /api/properties - OK Responses", () => {
     test("should respond with status 200", async () => {
@@ -84,14 +91,16 @@ describe("app", () => {
       const firstPropertyHost = body.properties[0].host;
       expect(firstPropertyHost.indexOf(" ") > -1).toBe(true);
     });
-    test.skip("response of properties is sorted by most to least favourite", async () => {
+    test("response of properties is sorted by most to least favourite", async () => {
       const { body } = await request(app).get("/api/properties");
       const lengthOfResponses = body.properties.length - 1;
+      const actualMostFavouritedProperties = await db.query(
+        `SELECT COUNT(property_id), property_id FROM favourites GROUP BY property_id ORDER BY COUNT(property_id) DESC;`
+      );
       expect(
-        body.properties[0].favourites >
-          body.properties[lengthOfResponses].favourites
+        body.properties[0].property_id ===
+          actualMostFavouritedProperties.rows[0].property_id
       ).toBe(true);
-      // come back to this one, use the favourites API for comparison
     });
     test("returns all results including properties with and without being favourites", async () => {
       const { body } = await request(app).get("/api/properties");

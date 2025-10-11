@@ -7,9 +7,10 @@ const {
   handleBadRequests,
   handleDeclaredErrors,
   handleServerErrors,
+  handleInvalidMethods,
 } = require("./errors");
 
-app.get("/api/properties", getProperties);
+app.route("/api/properties").get(getProperties).all(handleInvalidMethods);
 
 app.all("/*path", handleInvalidPaths);
 app.use(handleBadRequests);
