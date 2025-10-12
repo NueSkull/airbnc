@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 
-const { getProperties } = require("./controllers/properties");
+const { getProperties, getProperty } = require("./controllers/properties");
 const {
   handleInvalidPaths,
   handleBadRequests,
@@ -11,6 +11,7 @@ const {
 } = require("./errors");
 
 app.route("/api/properties").get(getProperties).all(handleInvalidMethods);
+app.route("/api/properties/:id").get(getProperty).all(handleInvalidMethods);
 
 app.all("/*path", handleInvalidPaths);
 app.use(handleBadRequests);

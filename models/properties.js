@@ -82,3 +82,12 @@ exports.getProperties = async (
   const result = await db.query(query, queries);
   return result.rows;
 };
+
+exports.getProperty = async (prop_id) => {
+  const result = await db.query(
+    `SELECT property_id, name AS property_name, location, price_per_night, description FROM properties 
+    WHERE property_id = $1`,
+    [prop_id]
+  );
+  return result.rows[0];
+};
