@@ -14,8 +14,8 @@ app.route("/api/properties").get(getProperties).all(handleInvalidMethods);
 app.route("/api/properties/:id").get(getProperty).all(handleInvalidMethods);
 
 app.all("/*path", handleInvalidPaths);
-app.use(handleBadRequests);
 app.use(handleDeclaredErrors);
+app.use(handleBadRequests);
 app.use(handleServerErrors);
 
 module.exports = app;

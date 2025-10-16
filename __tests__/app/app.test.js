@@ -49,14 +49,13 @@ describe("app", () => {
       test("should respond with status 200", async () => {
         await request(app).get("/api/properties").expect(200);
       });
+      test("response has property of properties", async () => {
+        const { body } = await request(app).get("/api/properties");
+        expect(body).toHaveProperty("properties");
+      });
       test("response is array of properties", async () => {
         const { body } = await request(app).get("/api/properties");
         expect(Array.isArray(body.properties)).toBe(true);
-      });
-      test("response has property of properties", async () => {
-        const { body } = await request(app).get("/api/properties");
-        expect(Array.isArray(body.properties)).toBe(true);
-        expect(body).toHaveProperty("properties");
       });
       test("response of properties has length", async () => {
         const { body } = await request(app).get("/api/properties");
@@ -208,21 +207,21 @@ describe("app", () => {
         expect(status).toBe(400);
         expect(body.msg).toBe("Invalid Order Property");
       });
-      test("None numeric minprice will return Status 400 and msg 'Price Must Be Numeric'", async () => {
+      test("None numeric minprice will return Status 400 and msg 'Input must be a number'", async () => {
         const { status, body } = await request(app).get(
           "/api/properties?minprice=textbased"
         );
 
         expect(status).toBe(400);
-        expect(body.msg).toBe("Price Must Be Numeric");
+        expect(body.msg).toBe("Input must be a number");
       });
-      test("None numeric maxprice will return Status 400 and msg 'Price Must Be Numeric'", async () => {
+      test("None numeric maxprice will return Status 400 and msg 'Input must be a number'", async () => {
         const { status, body } = await request(app).get(
           "/api/properties?maxprice=textbased"
         );
 
         expect(status).toBe(400);
-        expect(body.msg).toBe("Price Must Be Numeric");
+        expect(body.msg).toBe("Input must be a number");
       });
       test("None existing property_type returns 404", async () => {
         const { status, body } = await request(app).get(
@@ -234,10 +233,14 @@ describe("app", () => {
       });
     });
   });
-  describe.only("GET /api/properties:id", () => {
+  describe("GET /api/properties:id", () => {
     describe("Successful Responses", () => {
       test("Response has status of 200", async () => {
         await request(app).get("/api/properties/1").expect(200);
+      });
+      test("response has property of property", async () => {
+        const { body } = await request(app).get("/api/properties/1");
+        expect(body).toHaveProperty("property");
       });
       test("Property in response is of correct property_ID", async () => {
         const { body } = await request(app).get("/api/properties/2");
@@ -267,15 +270,52 @@ describe("app", () => {
 
         expect(body.property).toHaveProperty("favourite_count");
       });
-      test.todo("when passed a user ID, includes new property of favourited");
-      test.todo("If user_id has not favourited the property, returns false");
-      test.todo("If user_id has favourited property, returns true");
+      test("when passed a user ID, includes new property of favourited", async () => {
+        const { body } = await request(app).get("/api/properties/1?user_id=1");
+        expect(body.property).toHaveProperty("favourited");
+      });
+      test("If user_id has not favourited the property, returns false", async () => {
+        const { body } = await request(app).get("/api/properties/1?user_id=1");
+        expect(body.property.favourited).toBe(false);
+      });
+      test("If user_id has favourited property, returns true", async () => {
+        const { body } = await request(app).get("/api/properties/1?user_id=6");
+        expect(body.property.favourited).toBe(true);
+      });
     });
     describe("Error Responses", () => {
-      test.todo("Unknown property ID returns 404 - Property Not Found");
-      test.todo("Invalid property ID value return 400 - Invalid Property ID");
-      test.todo("Unknown user ID returns 404 - User ID Not Found");
-      test.todo("Invalid user ID value returns 400 - Invalid User ID");
+      test("Unknown property ID returns 404 - Property Not Found", async () => {
+        const { status, body } = await request(app).get(
+          "/api/properties/9999999999"
+        );
+
+        expect(status).toBe(404);
+        expect(body.msg).toBe("Property Not Found");
+      });
+      test("Invalid property ID value return 400 - Input must be a number", async () => {
+        const { status, body } = await request(app).get(
+          "/api/properties/ahouse"
+        );
+
+        expect(status).toBe(400);
+        expect(body.msg).toBe("Input must be a number");
+      });
+      test("Unknown user ID returns 404 - User Not Found", async () => {
+        const { status, body } = await request(app).get(
+          "/api/properties/1?user_id=999999"
+        );
+
+        expect(status).toBe(404);
+        expect(body.msg).toBe("User Not Found");
+      });
+      test("Invalid user ID value returns 400 - Input must be a number", async () => {
+        const { status, body } = await request(app).get(
+          "/api/properties/1?user_id=personsname"
+        );
+
+        expect(status).toBe(400);
+        expect(body.msg).toBe("Input must be a number");
+      });
     });
   });
 });

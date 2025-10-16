@@ -16,8 +16,9 @@ exports.getProperties = async (req, res, next) => {
 
 exports.getProperty = async (req, res, next) => {
   const prop_id = req.params.id;
+  const { user_id } = req.query;
 
-  const property = await getProperty(prop_id);
+  const property = await getProperty(prop_id, user_id);
 
   res.status(200).send({ property });
 };

@@ -60,6 +60,7 @@ exports.getProperties = async (
   }
 
   if (property_type) {
+    // Move this to its own function mmmmk thanks, same with other 2 tests, check all my errors if they make sense etc
     const availablePropertyTypesQuery = await db.query(
       `SELECT DISTINCT(property_type) FROM property_types`
     );
@@ -83,11 +84,28 @@ exports.getProperties = async (
   return result.rows;
 };
 
-exports.getProperty = async (prop_id) => {
-  const result = await db.query(
-    `SELECT property_id, name AS property_name, location, price_per_night, description FROM properties 
-    WHERE property_id = $1`,
+exports.getProperty = async (prop_id, user_id) => {
+  if (Number.isNaN(prop_id)) {
+    return Promise.reject({ status: 400, msg: "Invalid Property ID" });
+  }
+
+  let result = await db.query(
+    `SELECT p.property_id, p.name AS property_name, p.location, p.price_per_night, p.description, CONCAT(u.first_name, u.surname) AS host, u.avatar AS host_avatar, COUNT(f.property_id) AS favourite_count FROM properties AS p
+    JOIN users AS u ON p.host_id = u.user_id 
+    LEFT JOIN favourites AS f ON p.property_id = f.property_id 
+    WHERE p.property_id = $1
+    GROUP BY p.property_id, p.name, p.location, p.price_per_night, p.description, host, host_avatar`,
     [prop_id]
   );
+
+  if (user_id) {
+    const hasUserFavourited = await db.query(
+      `SELECT * FROM favourites WHERE property_id = $1 AND guest_id = $2;`,
+      [prop_id, user_id]
+    );
+    result.rows[0].favourited =
+      hasUserFavourited.rows.length > 0 ? true : false;
+  }
+
   return result.rows[0];
 };
