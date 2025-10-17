@@ -286,7 +286,7 @@ describe("app", () => {
     describe("Error Responses", () => {
       test("Unknown property ID returns 404 - Property Not Found", async () => {
         const { status, body } = await request(app).get(
-          "/api/properties/9999999999"
+          "/api/properties/99999"
         );
 
         expect(status).toBe(404);

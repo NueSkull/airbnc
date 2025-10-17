@@ -1,4 +1,6 @@
 const db = require("../db/connection");
+const { checkPropertyType } = require("./property_types");
+const { hasUserFavourited } = require("./favourites");
 
 exports.getProperties = async (
   maxprice,
@@ -60,19 +62,6 @@ exports.getProperties = async (
   }
 
   if (property_type) {
-    // Move this to its own function mmmmk thanks, same with other 2 tests, check all my errors if they make sense etc
-    const availablePropertyTypesQuery = await db.query(
-      `SELECT DISTINCT(property_type) FROM property_types`
-    );
-    const propertyTypes = availablePropertyTypesQuery.rows.map((propType) => {
-      return propType.property_type;
-    });
-    if (!propertyTypes.includes(property_type)) {
-      return Promise.reject({
-        status: 404,
-        msg: "No results found for property_type",
-      });
-    }
     query += `${whereOrAnd()} p.property_type = $${++queryCount} \n`;
     queries.push(property_type);
   }
@@ -81,7 +70,22 @@ exports.getProperties = async (
   ORDER BY ${sortValue} ${orderValue};`;
 
   const result = await db.query(query, queries);
+
+  if (result.rows.length === 0) {
+    await checkPropertyType(property_type);
+  }
+
   return result.rows;
+};
+
+const checkPropertyExists = async (prop_id) => {
+  const result = await db.query(
+    `SELECT * FROM properties WHERE property_id = $1;`,
+    [prop_id]
+  );
+  if (result.rows.length === 0) {
+    return Promise.reject({ status: 404, msg: "Property Not Found" });
+  }
 };
 
 exports.getProperty = async (prop_id, user_id) => {
@@ -98,13 +102,12 @@ exports.getProperty = async (prop_id, user_id) => {
     [prop_id]
   );
 
+  if (result.rows.length === 0) {
+    await checkPropertyExists(prop_id);
+  }
+
   if (user_id) {
-    const hasUserFavourited = await db.query(
-      `SELECT * FROM favourites WHERE property_id = $1 AND guest_id = $2;`,
-      [prop_id, user_id]
-    );
-    result.rows[0].favourited =
-      hasUserFavourited.rows.length > 0 ? true : false;
+    result.rows[0].favourited = await hasUserFavourited(prop_id, user_id);
   }
 
   return result.rows[0];
