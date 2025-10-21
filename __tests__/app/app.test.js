@@ -316,6 +316,104 @@ describe("app", () => {
         expect(status).toBe(400);
         expect(body.msg).toBe("Input must be a number");
       });
+      test("405 - incorrect method used on valid path", () => {
+        const methods = ["post", "put", "patch", "delete"];
+        methods.forEach(async (method) => {
+          const { status, body } = await request(app)[method](
+            "/api/properties/1"
+          );
+          expect(status).toBe(405);
+          expect(body.msg).toBe("Invalid Method.");
+        });
+      });
+    });
+  });
+  describe("GET /api/properties:id/reviews", () => {
+    describe("Successful responses", () => {
+      const reviewPath = "/api/properties/1/reviews";
+      test("should respond with status 200", async () => {
+        await request(app).get(reviewPath).expect(200);
+      });
+      test("response has property of reviews", async () => {
+        const { body } = await request(app).get(reviewPath);
+        expect(body).toHaveProperty("reviews");
+      });
+      test("response is array of reviews", async () => {
+        const { body } = await request(app).get(reviewPath);
+        expect(Array.isArray(body.reviews)).toBe(true);
+      });
+      test("response of reviews has length", async () => {
+        const { body } = await request(app).get(reviewPath);
+        expect(body.reviews.length).toBeGreaterThan(0);
+      });
+      test("check review has review_id value", async () => {
+        const { body } = await request(app).get(reviewPath);
+        const singleReview = body.reviews[0];
+        expect(singleReview).toHaveProperty("review_id");
+      });
+      test("check review has comment value", async () => {
+        const { body } = await request(app).get(reviewPath);
+        const singleReview = body.reviews[0];
+        expect(singleReview).toHaveProperty("comment");
+      });
+      test("check review has rating value", async () => {
+        const { body } = await request(app).get(reviewPath);
+        const singleReview = body.reviews[0];
+        expect(singleReview).toHaveProperty("rating");
+      });
+      test("check review has created_at value", async () => {
+        const { body } = await request(app).get(reviewPath);
+        const singleReview = body.reviews[0];
+        expect(singleReview).toHaveProperty("created_at");
+      });
+      test("check review has review_id value", async () => {
+        const { body } = await request(app).get(reviewPath);
+        const singleReview = body.reviews[0];
+        expect(singleReview).toHaveProperty("guest");
+      });
+      test("check review has review_id value", async () => {
+        const { body } = await request(app).get(reviewPath);
+        const singleReview = body.reviews[0];
+        expect(singleReview).toHaveProperty("guest_avatar");
+      });
+      test("response has a single property of average_rating", async () => {
+        const { body } = await request(app).get(reviewPath);
+        expect(body).toHaveProperty("average_rating");
+      });
+      test.only("response is ordered by newest rating to oldest", async () => {
+        const { body } = await request(app).get(reviewPath);
+        const firstReviewDate = body.reviews[0].created_at;
+        const lastReviewDate = body.reviews[body.reviews.length - 1].created_at;
+        expect(firstReviewDate > lastReviewDate).toBe(true);
+      });
+    });
+    describe("Error responses", () => {
+      test("A property with no reviews returns 404 - Reviews Not Found", async () => {
+        const { status, body } = await request(app).get(
+          "/api/properties/99999/reviews"
+        );
+
+        expect(status).toBe(404);
+        expect(body.msg).toBe("Reviews Not Found");
+      });
+      test("Invalid property ID value return 400 - Input must be a number", async () => {
+        const { status, body } = await request(app).get(
+          "/api/properties/ahouse/reviews"
+        );
+
+        expect(status).toBe(400);
+        expect(body.msg).toBe("Input must be a number");
+      });
+      test("405 - incorrect method used on valid path", () => {
+        const methods = ["post", "put", "patch", "delete"];
+        methods.forEach(async (method) => {
+          const { status, body } = await request(app)[method](
+            "/api/properties/1/reviews"
+          );
+          expect(status).toBe(405);
+          expect(body.msg).toBe("Invalid Method.");
+        });
+      });
     });
   });
 });

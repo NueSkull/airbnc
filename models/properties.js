@@ -89,10 +89,6 @@ const checkPropertyExists = async (prop_id) => {
 };
 
 exports.getProperty = async (prop_id, user_id) => {
-  if (Number.isNaN(prop_id)) {
-    return Promise.reject({ status: 400, msg: "Invalid Property ID" });
-  }
-
   let result = await db.query(
     `SELECT p.property_id, p.name AS property_name, p.location, p.price_per_night, p.description, CONCAT(u.first_name, u.surname) AS host, u.avatar AS host_avatar, COUNT(f.property_id) AS favourite_count FROM properties AS p
     JOIN users AS u ON p.host_id = u.user_id 
