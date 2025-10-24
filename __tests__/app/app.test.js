@@ -243,7 +243,7 @@ describe("app", () => {
       });
     });
   });
-  describe("GET /api/properties:id", () => {
+  describe("GET /api/properties/:id", () => {
     describe("Successful Responses", () => {
       test("Response has status of 200", async () => {
         await request(app).get("/api/properties/1").expect(200);
@@ -338,7 +338,7 @@ describe("app", () => {
       });
     });
   });
-  describe("GET /api/properties:id/reviews", () => {
+  describe("GET /api/properties/:id/reviews", () => {
     describe("Successful responses", () => {
       const reviewPath = "/api/properties/1/reviews";
       test("should respond with status 200", async () => {
@@ -416,17 +416,43 @@ describe("app", () => {
       });
     });
   });
-  describe("Get /api/users/:id", () => {
+  describe("GET /api/users/:id", () => {
     describe("Successful responses", () => {
-      test.todo("responds with status 200");
-      test.todo("responds with property user");
-      test.todo("response user has property user_id");
-      test.todo("response user has property first_name");
-      test.todo("response user has property surname");
-      test.todo("response user has property email");
-      test.todo("response user has property phone_number");
-      test.todo("response user has property avatar");
-      test.todo("response user has property created_at");
+      test("responds with status 200", async () => {
+        await request(app).get("/api/users/1").expect(200);
+      });
+      test("response has property of user", async () => {
+        const { body } = await request(app).get("/api/users/1");
+        expect(body).toHaveProperty("user");
+      });
+      test("response user has property user_id", async () => {
+        const { body } = await request(app).get("/api/users/1");
+        expect(body.user[0]).toHaveProperty("user_id");
+      });
+      test("response user has property first_name", async () => {
+        const { body } = await request(app).get("/api/users/1");
+        expect(body.user[0]).toHaveProperty("first_name");
+      });
+      test("response user has property surname", async () => {
+        const { body } = await request(app).get("/api/users/1");
+        expect(body.user[0]).toHaveProperty("surname");
+      });
+      test("response user has property email", async () => {
+        const { body } = await request(app).get("/api/users/1");
+        expect(body.user[0]).toHaveProperty("email");
+      });
+      test("response user has property phone_number", async () => {
+        const { body } = await request(app).get("/api/users/1");
+        expect(body.user[0]).toHaveProperty("phone_number");
+      });
+      test("response user has property avatar", async () => {
+        const { body } = await request(app).get("/api/users/1");
+        expect(body.user[0]).toHaveProperty("avatar");
+      });
+      test("response user has property created_at", async () => {
+        const { body } = await request(app).get("/api/users/1");
+        expect(body.user[0]).toHaveProperty("created_at");
+      });
     });
     describe("Error responses", () => {
       test("A none existing user_id returns 404 - User Not Found", async () => {
@@ -437,6 +463,202 @@ describe("app", () => {
       });
       test("Invalid user_id value return 400 - Input must be a number", async () => {
         const { status, body } = await request(app).get("/api/users/samanthas");
+
+        expect(status).toBe(400);
+        expect(body.msg).toBe("Input must be a number");
+      });
+      test("405 - incorrect method used on valid path", () => {
+        const methods = ["post", "put", "patch", "delete"];
+        methods.forEach(async (method) => {
+          const { status, body } = await request(app)[method]("/api/users/1");
+          expect(status).toBe(405);
+          expect(body.msg).toBe("Invalid Method.");
+        });
+      });
+    });
+  });
+  describe("POST /api/properties/:id/reviews", () => {
+    describe("Successful responses", () => {
+      test("Review can be created with guest_id, rating and comment - returns status 201", async () => {
+        const response = await request(app)
+          .post("/api/properties/1/reviews")
+          .send({
+            guest_id: 1,
+            rating: 5,
+            comment: "Lovely getaway for the family, very clean and tidy!",
+          });
+        expect(response.status).toBe(201);
+      });
+      test("Review can be created with guest_id and rating, no comment - returns status 201", async () => {
+        const response = await request(app)
+          .post("/api/properties/1/reviews")
+          .send({
+            guest_id: 2,
+            rating: 3,
+          });
+        expect(response.status).toBe(201);
+      });
+      test("Response has the property of review_id", async () => {
+        const response = await request(app)
+          .post("/api/properties/1/reviews")
+          .send({
+            guest_id: 1,
+            rating: 5,
+            comment: "Lovely getaway for the family, very clean and tidy!",
+          });
+        expect(response.body).toHaveProperty("review_id");
+      });
+      test("Response has the property of property_id and matches passed property", async () => {
+        const response = await request(app)
+          .post("/api/properties/3/reviews")
+          .send({
+            guest_id: 1,
+            rating: 5,
+            comment: "Lovely getaway for the family, very clean and tidy!",
+          });
+        expect(response.body).toHaveProperty("property_id");
+        expect(response.body.property_id).toBe(3);
+      });
+      test("Response has the property of guest_id and matches passed guest_id", async () => {
+        const response = await request(app)
+          .post("/api/properties/1/reviews")
+          .send({
+            guest_id: 5,
+            rating: 5,
+            comment: "Lovely getaway for the family, very clean and tidy!",
+          });
+        expect(response.body).toHaveProperty("guest_id");
+        expect(response.body.guest_id).toBe(5);
+      });
+      test("Response has the property of rating and matches passed rating", async () => {
+        const response = await request(app)
+          .post("/api/properties/1/reviews")
+          .send({
+            guest_id: 1,
+            rating: 4,
+            comment: "Lovely getaway for the family, very clean and tidy!",
+          });
+        expect(response.body).toHaveProperty("rating");
+        expect(response.body.rating).toBe(4);
+      });
+      test("Response has the property of comment and matches passed comment", async () => {
+        const response = await request(app)
+          .post("/api/properties/1/reviews")
+          .send({
+            guest_id: 1,
+            rating: 5,
+            comment: "Test comment!",
+          });
+        expect(response.body).toHaveProperty("comment");
+        expect(response.body.comment).toBe("Test comment!");
+      });
+      test("Response has the property of created_at", async () => {
+        const response = await request(app)
+          .post("/api/properties/1/reviews")
+          .send({
+            guest_id: 1,
+            rating: 5,
+            comment: "Lovely getaway for the family, very clean and tidy!",
+          });
+        expect(response.body).toHaveProperty("created_at");
+      });
+      test("Newly created reviews are now in the db table", async () => {
+        const response = await request(app)
+          .post("/api/properties/4/reviews")
+          .send({
+            guest_id: 3,
+            rating: 2,
+            comment: "Could have been tidied and cleaned better.",
+          });
+        const reviewId = response.body.review_id;
+
+        const reviewProof = await request(app).get("/api/properties/4/reviews");
+
+        expect(reviewProof.body.reviews[0]).toHaveProperty(
+          "review_id",
+          reviewId
+        );
+        expect(reviewProof.body.reviews[0]).toHaveProperty(
+          "comment",
+          "Could have been tidied and cleaned better."
+        );
+      });
+    });
+    describe("Error responses", () => {
+      test("If no body is sent, return 400 - No body", async () => {
+        const { status, body } = await request(app).post(
+          "/api/properties/1/reviews"
+        );
+
+        expect(status).toBe(400);
+        expect(body.msg).toBe("No body");
+      });
+      test("Request fails if not supplied guest_id", async () => {
+        const { status, body } = await request(app)
+          .post("/api/properties/1/reviews")
+          .send({
+            rating: 5,
+            comment: "Lovely getaway for the family, very clean and tidy!",
+          });
+
+        expect(status).toBe(400);
+        expect(body.msg).toBe("Value cannot be null");
+      });
+      test("Request fails if not supplied rating", async () => {
+        const { status, body } = await request(app)
+          .post("/api/properties/1/reviews")
+          .send({
+            guest_id: 1,
+            comment: "Lovely getaway for the family, very clean and tidy!",
+          });
+
+        expect(status).toBe(400);
+        expect(body.msg).toBe("Value cannot be null");
+      });
+      test("A none existing property_id returns 404 - Passed Parameter does not exist", async () => {
+        const { status, body } = await request(app)
+          .post("/api/properties/99999/reviews")
+          .send({
+            guest_id: 1,
+            rating: 5,
+            comment: "Lovely getaway for the family, very clean and tidy!",
+          });
+
+        expect(status).toBe(404);
+        expect(body.msg).toBe("Passed Parameter does not exist");
+      });
+      test("A none existing guest_id returns 404 - Passed Parameter does not exist", async () => {
+        const { status, body } = await request(app)
+          .post("/api/properties/1/reviews")
+          .send({
+            guest_id: 1000,
+            rating: 5,
+            comment: "Lovely getaway for the family, very clean and tidy!",
+          });
+
+        expect(status).toBe(404);
+        expect(body.msg).toBe("Passed Parameter does not exist");
+      });
+      test("Invalid guest_id value return 400 - Input must be a number", async () => {
+        const { status, body } = await request(app)
+          .post("/api/properties/1/reviews")
+          .send({
+            guest_id: "Ben Franklin",
+            rating: 5,
+            comment: "Lovely getaway for the family, very clean and tidy!",
+          });
+
+        expect(status).toBe(400);
+        expect(body.msg).toBe("Input must be a number");
+      });
+      test("Invalid rating value return 400 - Input must be a number", async () => {
+        const { status, body } = await request(app)
+          .post("/api/properties/1/reviews")
+          .send({
+            guest_id: 1,
+            rating: "Amazing",
+            comment: "Lovely getaway for the family, very clean and tidy!",
+          });
 
         expect(status).toBe(400);
         expect(body.msg).toBe("Input must be a number");

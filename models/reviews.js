@@ -24,3 +24,13 @@ exports.getAverageReviewScore = async (prop_id) => {
 
   return averageRating.rows[0].averagerating;
 };
+
+exports.insertReview = async (property_id, guest_id, rating, comment) => {
+  const insertedRow = await db.query(
+    `INSERT INTO reviews (property_id, guest_id, rating, comment) 
+    VALUES ($1, $2, $3, $4) 
+    RETURNING *;`,
+    [property_id, guest_id, rating, comment]
+  );
+  return insertedRow.rows[0];
+};

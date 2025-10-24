@@ -1,4 +1,8 @@
-const { getReviews, getAverageReviewScore } = require("../models/reviews");
+const {
+  getReviews,
+  getAverageReviewScore,
+  insertReview,
+} = require("../models/reviews");
 
 exports.getReviews = async (req, res, next) => {
   const prop_id = req.params.id;
@@ -7,4 +11,21 @@ exports.getReviews = async (req, res, next) => {
   const average_rating = await getAverageReviewScore(prop_id);
 
   res.status(200).send({ reviews, average_rating });
+};
+
+exports.postReview = async (req, res, next) => {
+  const property_id = req.params.id;
+
+  if (!req.body) {
+    return Promise.reject({ status: 400, msg: "No body" });
+  }
+
+  const { guest_id, rating, comment } = req.body;
+  const insertedReview = await insertReview(
+    property_id,
+    guest_id,
+    rating,
+    comment
+  );
+  res.status(201).send(insertedReview);
 };

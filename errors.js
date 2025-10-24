@@ -15,18 +15,24 @@ exports.handleDeclaredErrors = (err, req, res, next) => {
 };
 
 exports.handleBadRequests = (err, req, res, next) => {
-  console.log(err);
-  const errorCodes = {
+  const errorCodes400 = {
     42703: "Bad Request",
     "22P02": "Input must be a number",
+    23502: "Value cannot be null",
   };
-  if (errorCodes[err.code]) {
-    res.status(400).send({ msg: errorCodes[err.code] });
+  const errorCodes404 = {
+    23503: "Passed Parameter does not exist",
+  };
+  if (errorCodes400[err.code]) {
+    res.status(400).send({ msg: errorCodes400[err.code] });
+  } else if (errorCodes404[err.code]) {
+    res.status(404).send({ msg: errorCodes404[err.code] });
   } else {
     next(err);
   }
 };
 
 exports.handleServerErrors = (err, req, res, next) => {
+  console.log(err);
   res.status(500).send({ msg: "Server Error" });
 };
