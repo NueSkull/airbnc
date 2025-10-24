@@ -43,6 +43,16 @@ describe("app", () => {
         expect(body.msg).toBe("Invalid Method.");
       });
     });
+    test("405 - incorrect method used on valid path for property reviews", () => {
+      const methods = ["put", "patch"];
+      methods.forEach(async (method) => {
+        const { status, body } = await request(app)[method](
+          "/api/properties/1/reviews"
+        );
+        expect(status).toBe(405);
+        expect(body.msg).toBe("Invalid Method.");
+      });
+    });
   });
   describe("GET /api/properties", () => {
     describe("Successful Responses", () => {
@@ -380,7 +390,7 @@ describe("app", () => {
         const { body } = await request(app).get(reviewPath);
         expect(body).toHaveProperty("average_rating");
       });
-      test.only("response is ordered by newest rating to oldest", async () => {
+      test("response is ordered by newest rating to oldest", async () => {
         const { body } = await request(app).get(reviewPath);
         const firstReviewDate = body.reviews[0].created_at;
         const lastReviewDate = body.reviews[body.reviews.length - 1].created_at;
@@ -404,15 +414,32 @@ describe("app", () => {
         expect(status).toBe(400);
         expect(body.msg).toBe("Input must be a number");
       });
-      test("405 - incorrect method used on valid path", () => {
-        const methods = ["post", "put", "patch", "delete"];
-        methods.forEach(async (method) => {
-          const { status, body } = await request(app)[method](
-            "/api/properties/1/reviews"
-          );
-          expect(status).toBe(405);
-          expect(body.msg).toBe("Invalid Method.");
-        });
+    });
+  });
+  describe("Get /api/users/:id", () => {
+    describe("Successful responses", () => {
+      test.todo("responds with status 200");
+      test.todo("responds with property user");
+      test.todo("response user has property user_id");
+      test.todo("response user has property first_name");
+      test.todo("response user has property surname");
+      test.todo("response user has property email");
+      test.todo("response user has property phone_number");
+      test.todo("response user has property avatar");
+      test.todo("response user has property created_at");
+    });
+    describe("Error responses", () => {
+      test("A none existing user_id returns 404 - User Not Found", async () => {
+        const { status, body } = await request(app).get("/api/users/99999");
+
+        expect(status).toBe(404);
+        expect(body.msg).toBe("User Not Found");
+      });
+      test("Invalid user_id value return 400 - Input must be a number", async () => {
+        const { status, body } = await request(app).get("/api/users/samanthas");
+
+        expect(status).toBe(400);
+        expect(body.msg).toBe("Input must be a number");
       });
     });
   });

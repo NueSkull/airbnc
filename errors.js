@@ -15,6 +15,7 @@ exports.handleDeclaredErrors = (err, req, res, next) => {
 };
 
 exports.handleBadRequests = (err, req, res, next) => {
+  console.log(err);
   const errorCodes = {
     42703: "Bad Request",
     "22P02": "Input must be a number",
