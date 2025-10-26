@@ -34,3 +34,17 @@ exports.insertReview = async (property_id, guest_id, rating, comment) => {
   );
   return insertedRow.rows[0];
 };
+
+exports.deleteReview = async (reviewid) => {
+  const validateReview = await db.query(
+    `SELECT * FROM reviews WHERE review_id = $1`,
+    [reviewid]
+  );
+
+  if (validateReview.rows.length === 0) {
+    return Promise.reject({ status: 404, msg: "No review found" });
+  }
+
+  await db.query(`DELETE FROM reviews WHERE review_id = $1`, [reviewid]);
+  return;
+};

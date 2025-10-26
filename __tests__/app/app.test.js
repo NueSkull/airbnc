@@ -665,4 +665,51 @@ describe("app", () => {
       });
     });
   });
+  describe("DELETE /api/reviews/:id", () => {
+    describe("Successful responses", () => {
+      test("Responds with status 201", async () => {
+        await request(app).delete("/api/reviews/1").expect(204);
+      });
+      test("Only deletes that record", async () => {
+        const propertyReview = await request(app).get(
+          "/api/properties/1/reviews"
+        );
+        const propReviewId = propertyReview.body.reviews[0].review_id; // ensures deleted review is the first as fetched
+        await request(app).delete(`/api/reviews/${propReviewId}`).expect(204);
+        const afterDeleteReview = await request(app).get(
+          "/api/properties/1/reviews"
+        );
+        const afterDeleteReviewId = afterDeleteReview.body.reviews[0].review_id;
+        expect(propReviewId !== afterDeleteReviewId).toBe(true);
+      });
+      test("Remaining rows remain", async () => {
+        const propertyReviews = await request(app).get(
+          "/api/properties/1/reviews"
+        );
+        const beforeDeleteLength = propertyReviews.body.reviews.length;
+        await request(app).delete(`/api/reviews/8`).expect(204);
+        const afterDeleteReview = await request(app).get(
+          "/api/properties/1/reviews"
+        );
+        const afterDeleteLength = afterDeleteReview.body.reviews.length;
+        expect(beforeDeleteLength - 1).toBe(afterDeleteLength);
+      });
+    });
+    describe("Error responses", () => {
+      test("Incorrect format for review ID returns 400 - Input must be a number", async () => {
+        const { status, body } = await request(app).delete(
+          `/api/reviews/eight`
+        );
+
+        expect(status).toBe(400);
+        expect(body.msg).toBe("Input must be a number");
+      });
+      test("Non-existing review_id return 404 - No review found.", async () => {
+        const { status, body } = await request(app).delete(`/api/reviews/9000`);
+
+        expect(status).toBe(404);
+        expect(body.msg).toBe("No review found");
+      });
+    });
+  });
 });

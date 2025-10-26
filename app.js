@@ -2,7 +2,11 @@ const express = require("express");
 const app = express();
 
 const { getProperties, getProperty } = require("./controllers/properties");
-const { getReviews, postReview } = require("./controllers/reviews");
+const {
+  getReviews,
+  postReview,
+  deleteReview,
+} = require("./controllers/reviews");
 const { getUsers } = require("./controllers/users");
 const {
   handleInvalidPaths,
@@ -21,6 +25,7 @@ app
   .post(postReview)
   .all(handleInvalidMethods);
 app.route("/api/users/:id").get(getUsers).all(handleInvalidMethods);
+app.route("/api/reviews/:id").delete(deleteReview).all(handleInvalidMethods);
 
 app.all("/*path", handleInvalidPaths);
 app.use(handleDeclaredErrors);
