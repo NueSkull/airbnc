@@ -7,8 +7,10 @@
     "test": "jest",
     "test-db": "jest db",
     "test-app": "jest app",
-    "seed": "node ./db/seeding/seed-run.js",
-    "createdb": "psql -f db/create-database.sql"
+    "seed-test": "NODE_ENV=test node ./db/seeding/seed-run.js",
+    "seed-dev": "node ./db/seeding/seed-run.js", 
+    "seed-prod": "NODE_ENV=prod node ./db/seeding/seed-run.js",
+    "createdbs": "psql -f db/create-database.sql"
   },
   "repository": {
     "type": "git",

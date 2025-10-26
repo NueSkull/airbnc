@@ -35,7 +35,7 @@ PGDATABASE=airbnc_test
 An NPM script has been created to easily create or recreate the database, use the command below.
 
 ```
-npm run createdb
+npm run createdbs
 ```
 
 ### Seed the tables
