@@ -16,6 +16,10 @@ To run this project locally, please ensure you have installed
 - Node.js
 - psql
 
+## View
+
+To view this project online, visit https://airbnc-60wa.onrender.com/
+
 ## Instructions
 
 First of all we need to install the dependancies, install them with the below command.
