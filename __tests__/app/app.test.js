@@ -667,7 +667,7 @@ describe("app", () => {
   });
   describe("DELETE /api/reviews/:id", () => {
     describe("Successful responses", () => {
-      test("Responds with status 201", async () => {
+      test("Responds with status 204", async () => {
         await request(app).delete("/api/reviews/1").expect(204);
       });
       test("Only deletes that record", async () => {

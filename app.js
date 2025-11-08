@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 
 const { getProperties, getProperty } = require("./controllers/properties");
 const {
@@ -16,6 +17,7 @@ const {
   handleInvalidMethods,
 } = require("./errors");
 
+app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 app.route("/api/properties").get(getProperties).all(handleInvalidMethods);
