@@ -1,0 +1,62 @@
+:root {
+  --airblue: rgb(23, 172, 253);
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Lexend+Exa:wght@100..900&family=Quicksand:wght@300..700&display=swap");
+header {
+  background: var(--airblue);
+  color: white;
+  text-align: center;
+  font-size: 1.8em;
+  padding: 20px;
+}
+.logo-text {
+  font-family: "Lexend Exa", sans-serif;
+}
+body {
+  background: white;
+  margin: 0;
+  font-family: "Quicksand", sans-serif;
+  margin: 0;
+}
+.central {
+  background: #f8f8f8;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem;
+}
+.method-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.method-header {
+  font-size: 1.2em;
+  background: white;
+  border-radius: 10px 0px 0px 10px;
+  padding: 4px 10px 4px 0px;
+  max-width: fit-content;
+}
+.method {
+  padding: 4px 14px;
+  border-radius: 10px 0px 0px 10px;
+  color: white;
+}
+.method.get {
+  background: rgb(0, 185, 0);
+}
+.method.post {
+  background: orange;
+}
+.method.delete {
+  background: red;
+}
+pre {
+  background: white;
+  padding: 10px;
+  overflow-x: scroll;
+}
+hr {
+  max-width: 75%;
+  margin: 40px auto;
+  border: 1px solid var(--airblue);
+}

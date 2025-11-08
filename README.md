@@ -76,6 +76,12 @@ Tests have also been provided for the database utilities functions, this can be 
 npm run test-db
 ```
 
+Both tests can be run at the same time using the below.
+
+```
+npm run test
+```
+
 ### Running the app
 
 The app can be started locally by running the below command in root directory.
@@ -93,7 +99,7 @@ Viewing the application can then be done by visiting localhost:8080 in a browser
 | GET    | /api/properties             | Retreives all properties                        |
 | GET    | /api/properties/:id         | Retreives a single property based on the :id    |
 | GET    | /api/properties/:id/reviews | Retreives reviews for the specified property    |
-| POST   | /api/properties/:id/reviews | Created a new review for the specified property |
+| POST   | /api/properties/:id/reviews | Creates a new review for the specified property |
 | GET    | /api/users/:id              | Retrieves the users details                     |
 | DELETE | /api/reviews/:id            | Deletes the specified review                    |
 

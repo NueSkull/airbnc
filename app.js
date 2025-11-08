@@ -17,6 +17,7 @@ const {
 } = require("./errors");
 
 app.use(express.json());
+app.use(express.static("public"));
 app.route("/api/properties").get(getProperties).all(handleInvalidMethods);
 app.route("/api/properties/:id").get(getProperty).all(handleInvalidMethods);
 app

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirBNC</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<header><div class="logo-text"> <strong>air</strong>BNC</div></header>
+<body>
+    <div class="central">
+        <h1>Welcome to <span class="logo-text"><strong>air</strong>BNC</span></h1>
+        <h3>A project by Mark Travers, studying Software Development in JavaScript at Northcoders!</h3>
+        <br/>
+        <h2>API usage and expectations</h2>
+        <p>On this page you will find all the methods, paths and expected outputs for endpoints available to use for airBNC.</p>
+        <hr>
+        <div class="method-container">
+            <div class="method-header"><span class="method get">GET</span>&nbsp; api/properties</div>
+            <p>	Retreives all properties for use in a listing page, has minimal details for populating property cards</p>
+            <p></p>
+            <pre><code>{
+  "properties": [
+    {
+      "property_id": 20,
+      "property_name": "Lakeside Luxury Villa",
+      "host": "Lucas Walker",
+      "location": "Lake District, UK",
+      "price_per_night": "350"
+    },
+    {
+      "property_id": 6,
+      "property_name": "Luxury Penthouse with View",
+      "host": "Alice Johnson",
+      "location": "London, UK",
+      "price_per_night": "250"
+    },
+    {
+      "property_id": 10,
+      "property_name": "Quaint Cottage in the Hills",
+      "host": "Isabella Martinez",
+      "location": "Lake District, UK",
+      "price_per_night": "180"
+    },
+    {
+      "property_id": 15,
+      "property_name": "Seafront Villa with Infinity Pool",
+      "host": "Lucas Walker",
+      "location": "Cornwall, UK",
+      "price_per_night": "400"
+    },
+    ]
+}</code></pre>
+
+        </div>
+        <hr>
+        <div class="method-container">
+            <div class="method-header"><span class="method get">GET</span>&nbsp; api/properties/{property_id}</div>
+            <p>	Retreives all details for displaying a single property in more detail.</p>
+            <p></p>
+            <pre><code>{
+  "property": {
+    "property_id": 1,
+    "property_name": "Modern Apartment in City Center",
+    "location": "London, UK",
+    "price_per_night": "120",
+    "description": "Description of Modern Apartment in City Center. A sleek apartment with all modern amenities.",
+    "host": "AliceJohnson",
+    "host_avatar": "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "favourite_count": "3"
+  }
+}</code></pre>
+
+        </div>
+        <hr>
+        <div class="method-container">
+            <div class="method-header"><span class="method get">GET</span>&nbsp; api/properties/{property_id}/reviews</div>
+            <p>	Returns the reviews for the specified property, along with the aggregated rating.</p>
+            <p></p>
+            <pre><code>{
+  "reviews": [
+    {
+      "review_id": 9,
+      "comment": "The loft was comfortable and had a great central location, making it easy to walk to restaurants and attractions. However, it lacked natural light, which made it feel a bit gloomy during the day.",
+      "rating": 3,
+      "created_at": "2025-03-30T10:30:00.000Z",
+      "guest": 9,
+      "guest_avatar": "https://images.unsplash.com/photo-1606459431839-90b942dc3754?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    },
+    {
+      "review_id": 5,
+      "comment": "A beautiful and peaceful retreat tucked away from the hustle and bustle. The studio was well-appointed, comfortable, and perfect for relaxing. I appreciated the thoughtful touches throughout the space and the great value for the price.",
+      "rating": 5,
+      "created_at": "2024-08-22T13:10:00.000Z",
+      "guest": 5,
+      "guest_avatar": "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    },
+    {
+      "review_id": 1,
+      "comment": "Great place to stay! The apartment was clean, modern, and very comfortable. Its location in the heart of the city made it extremely convenient to explore nearby attractions, restaurants, and shops. Would definitely stay here again.",
+      "rating": 5,
+      "created_at": "2024-03-15T10:24:00.000Z",
+      "guest": 1,
+      "guest_avatar": "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    }
+  ],
+  "average_rating": "4.3333333333333333"
+}</code></pre>
+
+        </div>
+        <hr>
+        <div class="method-container">
+            <div class="method-header"><span class="method post">POST</span>&nbsp; api/properties/{property_id}/reviews</div>
+            <p>	Creates a review for the specified property. A body must be passed containing a valid guest_id and rating, the comment is optional.</p>
+            <pre><code>{
+    guest_id: 1,
+    rating: 5,
+    comment: "Lovely getaway for the family, very clean and tidy!",
+}</code></pre>
+          <br/>
+            <p>Returns with Status 201 on success.</p>
+
+        </div>
+        <hr>
+        <div class="method-container">
+            <div class="method-header"><span class="method get">GET</span>&nbsp; api/users/{user_id}</div>
+            <p>	Returns the users details.</p>
+            <p></p>
+            <pre><code>{
+  "user": [
+    {
+      "user_id": 1,
+      "first_name": "Alice",
+      "surname": "Johnson",
+      "email": "alice@example.com",
+      "phone_number": "+44 7000 111111",
+      "avatar": "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "created_at": "2025-10-26T15:23:11.282Z"
+    }
+  ]
+}</code></pre>
+
+        </div>
+        <hr>
+        <div class="method-container">
+            <div class="method-header"><span class="method delete">DELETE</span>&nbsp; api/reviews/{review_id}</div>
+            <p>	Removes a review. On success returns Status Code 204.</p>
+
+        </div>
+    </div>
+</body>
+</html>
