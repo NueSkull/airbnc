@@ -10,7 +10,8 @@
     "seed-test": "NODE_ENV=test node ./db/seeding/seed-run.js",
     "seed-dev": "node ./db/seeding/seed-run.js", 
     "seed-prod": "NODE_ENV=prod node ./db/seeding/seed-run.js",
-    "createdbs": "psql -f db/create-database.sql"
+    "createdbs": "psql -f db/create-database.sql",
+    "dev": "node listen.js"
   },
   "repository": {
     "type": "git",
