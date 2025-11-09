@@ -2,7 +2,6 @@
   --airblue: rgb(23, 172, 253);
 }
 
-@import url("https://fonts.googleapis.com/css2?family=Lexend+Exa:wght@100..900&family=Quicksand:wght@300..700&display=swap");
 header {
   background: var(--airblue);
   color: white;
@@ -11,7 +10,7 @@ header {
   padding: 20px;
 }
 .logo-text {
-  font-family: "Lexend Exa", sans-serif;
+  font-family: "Elms Sans", sans-serif;
 }
 body {
   background: white;
