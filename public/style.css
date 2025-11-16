@@ -59,3 +59,29 @@ hr {
   margin: 40px auto;
   border: 1px solid var(--airblue);
 }
+
+body.dark-mode {
+  background: #222;
+  color: white;
+}
+.dark-mode .central {
+  background: #333;
+}
+.dark-mode .method-header {
+  background: #222;
+}
+.dark-mode pre {
+  background: #222;
+  padding: 10px;
+  overflow-x: scroll;
+}
+#headertoggle {
+  cursor: pointer;
+  font-size: 0.7em;
+  user-select: none;
+}
+
+.headerlogo {
+  display: flex;
+  justify-content: space-between;
+}
