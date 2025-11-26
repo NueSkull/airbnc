@@ -1,6 +1,7 @@
 const db = require("../db/connection");
 const { checkPropertyType } = require("./property_types");
 const { hasUserFavourited } = require("./favourites");
+const { getFeaturedImage, getPropertyImages } = require("./images");
 
 exports.getProperties = async (
   maxprice,
@@ -75,7 +76,13 @@ exports.getProperties = async (
     await checkPropertyType(property_type);
   }
 
-  return result.rows;
+  const featuredImagesPromises = result.rows.map(async (property) => {
+    const featuredImage = await getFeaturedImage(property.property_id);
+    return { ...property, image: featuredImage };
+  });
+
+  const addedFeaturedImages = await Promise.all(featuredImagesPromises);
+  return addedFeaturedImages;
 };
 
 const checkPropertyExists = async (prop_id) => {
@@ -106,5 +113,6 @@ exports.getProperty = async (prop_id, user_id) => {
     result.rows[0].favourited = await hasUserFavourited(prop_id, user_id);
   }
 
-  return result.rows[0];
+  const propertyImages = await getPropertyImages(prop_id);
+  return { ...result.rows[0], images: propertyImages };
 };

@@ -712,4 +712,20 @@ describe("app", () => {
       });
     });
   });
+  describe("GET /api/properties/ images", () => {
+    test("properties have new property of image", async () => {
+      const { body } = await request(app).get("/api/properties");
+      expect(body.properties[0]).toHaveProperty("image");
+    });
+  });
+  describe("GET /api/properties/:id images", () => {
+    test("properties has new property of images", async () => {
+      const { body } = await request(app).get("/api/properties/2");
+      expect(body.property).toHaveProperty("images");
+    });
+    test("images property should be an array", async () => {
+      const { body } = await request(app).get("/api/properties/2");
+      expect(Array.isArray(body.property.images)).toBe(true);
+    });
+  });
 });
